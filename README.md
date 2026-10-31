@@ -22,32 +22,32 @@ Scores are indexed so a **Ryzen 5 5600X = 100** (CPU) and an **RTX 3060 12GB = 1
 
 ## Screenshots
 
-![Overview](docs/screenshots/overview.png)
+![Overview](docs/screenshots/readme/overview.png)
 
 <details>
 <summary>More screenshots</summary>
 
 ### Benchmarks
-![Benchmarks](docs/screenshots/benchmarks.png)
+![Benchmarks](docs/screenshots/readme/benchmarks.png)
 
 ### Games
-![Games](docs/screenshots/games.png)
+![Games](docs/screenshots/readme/games.png)
 
 ### Diagnostics
-![Diagnostics](docs/screenshots/diagnostics.png)
+![Diagnostics](docs/screenshots/readme/diagnostics.png)
 
 ### Compatibility
-![Compatibility](docs/screenshots/compatibility.png)
+![Compatibility](docs/screenshots/readme/compatibility.png)
 
 ### Upgrades
-![Upgrades](docs/screenshots/upgrades.png)
+![Upgrades](docs/screenshots/readme/upgrades.png)
 
 ### Settings
-![Settings](docs/screenshots/settings.png)
+![Settings](docs/screenshots/readme/settings.png)
 
 </details>
 
-To refresh them, build in Release and run `tools/capture-screenshots.ps1 -RunBenchmark`. The app accepts `--page <Name>` (for example `--page Games`) to open on a specific page.
+To refresh them, build in Release and run `tools/capture-screenshots.ps1 -OutDir docs/screenshots/readme -RunBenchmark -ClearBenchmarkHistory`. The app accepts `--page <Name>` (for example `--page Games`) to open on a specific page.
 
 ## Requirements
 
