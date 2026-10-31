@@ -4,6 +4,8 @@ A Windows desktop app that profiles your PC, benchmarks it, tells you which game
 
 Built with .NET 8, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 
+> **Disclaimer:** Vibe coded project. I am not a C# or Windows App developer and do not guarantee working order, security, or safety running on your system.
+
 ## Features
 
 | Page | What it does |
