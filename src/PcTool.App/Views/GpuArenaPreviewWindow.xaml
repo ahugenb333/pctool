@@ -1,0 +1,28 @@
+<Window x:Class="PcTool.App.Views.GpuArenaPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="GPU stress test"
+        Width="980" Height="640"
+        MinWidth="640" MinHeight="420"
+        Background="#FF0A0C14"
+        KeyDown="Window_OnKeyDown">
+    <DockPanel Margin="12">
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <TextBlock Text="Live 1440p raymarch" FontSize="16" FontWeight="SemiBold" Foreground="#FFE8EAED" />
+            <TextBlock Text="Same scene as the headless GPU score. The number is how many 1440p frames the GPU finishes per second. The picture follows the monitor, so it will look smoother than that number. Press Esc to close."
+                       Foreground="#FF9AA0A6" TextWrapping="Wrap" Margin="0,4,0,0" />
+            <TextBlock x:Name="ErrorText" Foreground="#FFFF6B6B" TextWrapping="Wrap" Margin="0,6,0,0" Visibility="Collapsed" />
+        </StackPanel>
+        <Border BorderBrush="#FF2A3140" BorderThickness="1" CornerRadius="4" MinHeight="360" Background="#FF10141C">
+            <Grid>
+                <Image x:Name="Viewport" Stretch="Uniform" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" Padding="10,6" CornerRadius="4" Background="#CC0A0C14">
+                    <StackPanel>
+                        <TextBlock x:Name="FpsText" Text="Measuring…" Foreground="#FFE8EAED" FontSize="20" FontWeight="SemiBold" />
+                        <TextBlock x:Name="FrameText" Text="2560×1440 GPU · picture at monitor rate" Foreground="#FF9AA0A6" FontSize="12" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </DockPanel>
+</Window>

@@ -11,7 +11,7 @@ Built with .NET 8, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 | Page | What it does |
 |---|---|
 | Overview | CPU, GPU, memory, storage, motherboard and Windows details, live sensors, JSON export |
-| Benchmarks | CPU single/multi-thread, memory bandwidth/latency, disk sequential/4K, Direct3D 11 GPU test; history saved locally |
+| Benchmarks | CPU single/multi-thread, memory bandwidth/latency, disk sequential/4K, and two Direct3D 11 tests at 1440p: a raymarched GPU stress scene (one live window) and a lighter raster arena. History is saved locally |
 | Games | "Can I run it?" verdicts for ~40 popular games with a suggested preset and the bottleneck |
 | Diagnostics | Crash and hang events, GPU driver resets (TDR), WHEA hardware errors, VC++ runtimes, driver age, power plan, Game Mode/HAGS, page file, disk space, temperatures, overlay apps |
 | Compatibility | Checks any part in the catalog against your PC: socket, chipset/BIOS, RAM type and slots, PSU headroom, PCIe, M.2, case clearance |
@@ -21,6 +21,10 @@ Built with .NET 8, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 Scores are indexed so a **Ryzen 5 5600X = 100** (CPU) and an **RTX 3060 12GB = 100** (GPU raster speed). VRAM is not part of the GPU index — a faster 8 GB card can score above 100 while games still flag titles that need more than 8 GB.
 
 ## Screenshots
+
+The GPU score is a 1440p raymarch with colored materials and three fixed lights, each casting a shadow. **View GPU stress test** on the Benchmarks page shows it live. Opening that button again focuses the existing window instead of starting a second copy.
+
+![GPU stress test](docs/screenshots/readme/gpu-stress.gif)
 
 ![Overview](docs/screenshots/readme/overview.png)
 
@@ -47,7 +51,7 @@ Scores are indexed so a **Ryzen 5 5600X = 100** (CPU) and an **RTX 3060 12GB = 1
 
 </details>
 
-To refresh them, build in Release and run `tools/capture-screenshots.ps1 -OutDir docs/screenshots/readme -RunBenchmark -ClearBenchmarkHistory`. The app accepts `--page <Name>` (for example `--page Games`) to open on a specific page.
+To refresh the page shots, build in Release and run `tools/capture-screenshots.ps1 -OutDir docs/screenshots/readme -RunBenchmark -ClearBenchmarkHistory`. The app accepts `--page <Name>` (for example `--page Games`) to open on a specific page. Refresh the stress-test GIF with `tools/capture-gpu-gif.ps1` (needs ffmpeg, or the script downloads a portable build). The GIF is a short 12 fps loop so the repo does not carry a video.
 
 ## Requirements
 
@@ -92,7 +96,7 @@ src/
   PcTool.Core           Models and interfaces (IGameCatalog, IPartsCatalog, IPriceSource, ...)
   PcTool.Data           Embedded data loaders, name matching, SystemSpecsBuilder
   PcTool.Hardware       WMI / DXGI / LibreHardwareMonitor detection
-  PcTool.Benchmarks     CPU, memory, disk and Direct3D 11 benchmarks
+  PcTool.Benchmarks     CPU, memory, disk, 1440p raymarch stress test, and raster arena
   PcTool.Games          GameAdvisor ("can it run")
   PcTool.Compatibility  CompatibilityEngine rules
   PcTool.Upgrades       UpgradeAdvisor (bottleneck, candidates, ranking)

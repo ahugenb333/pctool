@@ -29,6 +29,7 @@
                 </DockPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                     <ui:Button Content="Run benchmarks" Icon="{ui:SymbolIcon Play24}" Appearance="Primary" Command="{Binding RunCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="View GPU stress test" Icon="{ui:SymbolIcon Eye24}" Command="{Binding PreviewGpuArenaCommand}" Margin="0,0,8,0" />
                     <ui:Button Content="Cancel" Command="{Binding CancelCommand}" />
                 </StackPanel>
                 <StackPanel Margin="0,12,0,0" Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibility}}">
