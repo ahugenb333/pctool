@@ -1,0 +1,93 @@
+PcTool - third-party notices
+============================
+
+PcTool includes or depends on the components and data listed below. Each is
+distributed under its own license, reproduced or referenced here.
+
+-------------------------------------------------------------------------------
+DATA
+-------------------------------------------------------------------------------
+
+TechFuelHQ PC Builder Parts Dataset
+  Source:  https://techfuelhq.com/tools/pc-builder/
+           (Hugging Face mirror: iBlessi/pc-builder-parts-2026, v2.1.1)
+  License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+           https://creativecommons.org/licenses/by/4.0/
+  Changes: Field names and values normalized (form factor spellings, chipset
+           vendor prefixes, socket names) when loaded. No rows were altered.
+  Used in: data/parts/techfuelhq-parts.json
+
+-------------------------------------------------------------------------------
+MOZILLA PUBLIC LICENSE 2.0 COMPONENTS
+-------------------------------------------------------------------------------
+
+The following libraries are used unmodified. They are covered by the Mozilla
+Public License, v. 2.0; you can obtain a copy of the license at
+https://mozilla.org/MPL/2.0/. Their Source Code Form is available from the
+project pages below.
+
+  LibreHardwareMonitorLib 0.9.6   https://github.com/LibreHardwareMonitor/LibreHardwareMonitor
+  BlackSharp.Core 1.0.7           https://github.com/Blacktempel/BlackSharp
+  DiskInfoToolkit 1.1.2           https://github.com/Blacktempel/DiskInfoToolkit
+  RAMSPDToolkit-NDD 1.4.2         https://github.com/Blacktempel/RAMSPDToolkit
+
+-------------------------------------------------------------------------------
+APACHE LICENSE 2.0 COMPONENTS
+-------------------------------------------------------------------------------
+
+HIDSharp 2.6.4
+  Copyright 2010-2025 James F. Bellinger <http://software.seekye.com/hidsharp>
+
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License. You may obtain a copy
+  of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  License for the specific language governing permissions and limitations
+  under the License.
+
+-------------------------------------------------------------------------------
+MIT LICENSE COMPONENTS
+-------------------------------------------------------------------------------
+
+  WPF-UI 4.3.0                    Copyright (c) Leszek Pomianowski and WPF UI Contributors
+                                  https://github.com/lepoco/wpfui
+  CommunityToolkit.Mvvm 8.4.2     Copyright (c) .NET Foundation and Contributors
+                                  https://github.com/CommunityToolkit/dotnet
+  Hardware.Info 110.0.0.1         Copyright (c) Jinjinov
+                                  https://github.com/Jinjinov/Hardware.Info
+  Vortice.Windows 3.8.3           Copyright (c) Amer Koleci and Contributors
+  (DXGI, Direct3D11, D3DCompiler, https://github.com/amerkoleci/Vortice.Windows
+   DirectX)
+  Vortice.Mathematics 2.1.0       Copyright (c) Amer Koleci and Contributors
+                                  https://github.com/amerkoleci/Vortice.Mathematics
+  SharpGen.Runtime 2.4.2-beta     Copyright (c) SharpGenTools contributors
+                                  https://github.com/SharpGenTools/SharpGenTools
+  Mono.Posix.NETStandard 1.0.0    Copyright (c) Microsoft Corporation / Xamarin
+                                  https://github.com/mono/mono
+  .NET runtime, WPF and the       Copyright (c) .NET Foundation and Contributors
+  Microsoft.Extensions.* and      https://github.com/dotnet/runtime
+  System.* packages               https://github.com/dotnet/wpf
+                                  (see https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT)
+
+Each of the components above is licensed under the MIT License:
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.

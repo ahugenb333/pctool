@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PcTool.Core\PcTool.Core.csproj" />
+    <ProjectReference Include="..\PcTool.Data\PcTool.Data.csproj" />
+    <ProjectReference Include="..\PcTool.Compatibility\PcTool.Compatibility.csproj" />
+    <ProjectReference Include="..\PcTool.Games\PcTool.Games.csproj" />
+  </ItemGroup>
+
+</Project>

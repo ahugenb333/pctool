@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "publisher": "PcTool",
+    "license": "Same license as PcTool",
+    "note": "Drop-in upgrade parts for older platforms (AM4, LGA1700 DDR4) that the TechFuelHQ current-generation dataset does not cover. Same schema as techfuelhq-parts.json."
+  },
+  "cpu": [
+    { "id": "pt-cpu-r5-5600", "vendor": "AMD", "model": "Ryzen 5 5600", "cores": 6, "threads": 12, "boost_ghz": 4.4, "tdp_w": 65, "socket": "AM4", "ram_type": "DDR4", "supported_chipsets": ["A320", "B350", "X370", "B450", "X470", "A520", "B550", "X570"], "notes": "Cheapest sensible AM4 drop-in. Needs a recent BIOS on 300/400-series boards." },
+    { "id": "pt-cpu-r7-5700x", "vendor": "AMD", "model": "Ryzen 7 5700X", "cores": 8, "threads": 16, "boost_ghz": 4.6, "tdp_w": 65, "socket": "AM4", "ram_type": "DDR4", "supported_chipsets": ["A320", "B350", "X370", "B450", "X470", "A520", "B550", "X570"], "notes": "8 cores at 65 W; easy to cool on stock AM4 coolers." },
+    { "id": "pt-cpu-r7-5700x3d", "vendor": "AMD", "model": "Ryzen 7 5700X3D", "cores": 8, "threads": 16, "boost_ghz": 4.1, "tdp_w": 105, "socket": "AM4", "ram_type": "DDR4", "supported_chipsets": ["A320", "B350", "X370", "B450", "X470", "A520", "B550", "X570"], "notes": "3D V-Cache gaming upgrade for AM4 without replacing the board or RAM." },
+    { "id": "pt-cpu-r7-5800x3d", "vendor": "AMD", "model": "Ryzen 7 5800X3D", "cores": 8, "threads": 16, "boost_ghz": 4.5, "tdp_w": 105, "socket": "AM4", "ram_type": "DDR4", "supported_chipsets": ["A320", "B350", "X370", "B450", "X470", "A520", "B550", "X570"], "notes": "Fastest AM4 gaming CPU; stock is limited and often used." },
+    { "id": "pt-cpu-r9-5950x", "vendor": "AMD", "model": "Ryzen 9 5950X", "cores": 16, "threads": 32, "boost_ghz": 4.9, "tdp_w": 105, "socket": "AM4", "ram_type": "DDR4", "supported_chipsets": ["B450", "X470", "A520", "B550", "X570"], "notes": "Top AM4 multi-thread part for productivity workloads." },
+    { "id": "pt-cpu-i5-12400f", "vendor": "Intel", "model": "Core i5-12400F", "cores": 6, "threads": 12, "boost_ghz": 4.4, "tdp_w": 65, "socket": "LGA1700", "ram_type": "DDR4/DDR5", "supported_chipsets": ["H610", "B660", "H670", "Z690", "B760", "H770", "Z790"], "notes": "Budget LGA1700 part; no integrated graphics." },
+    { "id": "pt-cpu-i5-13400f", "vendor": "Intel", "model": "Core i5-13400F", "cores": 10, "threads": 16, "boost_ghz": 4.6, "tdp_w": 65, "socket": "LGA1700", "ram_type": "DDR4/DDR5", "supported_chipsets": ["H610", "B660", "H670", "Z690", "B760", "H770", "Z790"], "notes": "600-series boards need a BIOS update first." },
+    { "id": "pt-cpu-i5-14400f", "vendor": "Intel", "model": "Core i5-14400F", "cores": 10, "threads": 16, "boost_ghz": 4.7, "tdp_w": 65, "socket": "LGA1700", "ram_type": "DDR4/DDR5", "supported_chipsets": ["H610", "B660", "H670", "Z690", "B760", "H770", "Z790"], "notes": "600-series boards need a BIOS update first." }
+  ],
+  "gpu": [
+    { "id": "pt-gpu-rtx-4060", "vendor": "NVIDIA AIB", "model": "RTX 4060 8GB", "vram_gb": 8, "tgp_w": 115, "length_mm": 240, "pcie": "Gen4 x8", "notes": "Low-power 1080p card that fits small cases and modest PSUs." },
+    { "id": "pt-gpu-rx-7600-xt", "vendor": "AMD AIB", "model": "Radeon RX 7600 XT 16GB", "vram_gb": 16, "tgp_w": 190, "length_mm": 270, "pcie": "Gen4 x8", "notes": "Budget card with 16 GB for texture-heavy games." }
+  ],
+  "ram": [
+    { "id": "pt-ram-ddr4-16gb-3200", "vendor": "Generic", "model": "DDR4 16GB (2x8GB) 3200 CL16", "capacity_gb": 16, "kit": "2x8GB", "speed_mtps": 3200, "cas_latency": 16, "ram_type": "DDR4", "notes": "Entry DDR4 kit." },
+    { "id": "pt-ram-ddr4-32gb-3600", "vendor": "Generic", "model": "DDR4 32GB (2x16GB) 3600 CL18", "capacity_gb": 32, "kit": "2x16GB", "speed_mtps": 3600, "cas_latency": 18, "ram_type": "DDR4", "notes": "Sweet spot for AM4 and DDR4 LGA1700 gaming builds." },
+    { "id": "pt-ram-ddr4-64gb-3600", "vendor": "Generic", "model": "DDR4 64GB (2x32GB) 3600 CL18", "capacity_gb": 64, "kit": "2x32GB", "speed_mtps": 3600, "cas_latency": 18, "ram_type": "DDR4", "notes": "For heavy multitasking, simulation and creative work." }
+  ],
+  "storage": [
+    { "id": "pt-ssd-nvme-gen3-1tb", "vendor": "Generic", "model": "NVMe Gen3 1TB SSD", "capacity_gb": 1000, "interface": "NVMe Gen3 x4", "form_factor": "M.2 2280", "read_mbps": 3500, "write_mbps": 3000, "notes": "Works in any M.2 NVMe slot, including PCIe 3.0 boards." },
+    { "id": "pt-ssd-sata-1tb", "vendor": "Generic", "model": "SATA SSD 1TB", "capacity_gb": 1000, "interface": "SATA III 6Gb/s", "form_factor": "2.5-inch", "read_mbps": 550, "write_mbps": 500, "notes": "For systems without a free M.2 slot." }
+  ],
+  "psu": [
+    { "id": "pt-psu-650w-gold", "vendor": "Generic", "model": "650W 80+ Gold ATX", "wattage_w": 650, "efficiency": "80+ Gold", "notes": "Enough for mid-range GPUs up to ~220 W." }
+  ]
+}
