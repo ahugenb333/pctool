@@ -18,7 +18,7 @@ Built with .NET 8, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 | Upgrades | Finds the bottleneck for a goal (1080p/1440p/4K, a specific game, productivity) and ranks compatible upgrades and platform bundles within a budget |
 | Settings | Details the app can't detect (chipset on prebuilts, PSU, case), restart as administrator, data sources and licenses |
 
-Scores are indexed so a **Ryzen 5 5600X = 100** (CPU) and an **RTX 3060 12GB = 100** (GPU).
+Scores are indexed so a **Ryzen 5 5600X = 100** (CPU) and an **RTX 3060 12GB = 100** (GPU raster speed). VRAM is not part of the GPU index — a faster 8 GB card can score above 100 while games still flag titles that need more than 8 GB.
 
 ## Screenshots
 

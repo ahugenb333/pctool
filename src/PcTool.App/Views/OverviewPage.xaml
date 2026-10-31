@@ -15,6 +15,17 @@
                 <ui:Button Content="Export JSON" Icon="{ui:SymbolIcon Save24}" Command="{Binding ExportCommand}" Appearance="Primary" />
             </StackPanel>
         </DockPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+            <TextBlock Text="Compare against" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <ComboBox ItemsSource="{Binding State.ComparePresetOptions}" DisplayMemberPath="Label"
+                      SelectedValuePath="Id" SelectedValue="{Binding State.ComparePresetId, Mode=TwoWay}"
+                      MinWidth="140" />
+            <TextBlock Style="{StaticResource Caption}" VerticalAlignment="Center" Margin="12,0,0,0" TextWrapping="Wrap" MaxWidth="560">
+                <Run Text="{Binding State.CompareScale.Preset.Summary, Mode=OneWay}" />
+                <LineBreak />
+                <Run Text="The index is raster gaming speed only — not VRAM. Games checks memory separately." />
+            </TextBlock>
+        </StackPanel>
         <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource Caption}" Margin="0,4,0,0"
                    Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsed}}" />
 

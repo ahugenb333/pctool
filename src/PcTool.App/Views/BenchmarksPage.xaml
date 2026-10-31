@@ -6,8 +6,13 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}">
     <StackPanel Margin="24,12,24,24">
         <TextBlock Text="Benchmarks" FontSize="28" FontWeight="SemiBold" />
-        <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0"
-                   Text="Scores are indexed so a Ryzen 5 5600X (CPU) and an RTX 3060 12GB (GPU) score 100. GPU tier scores are raster gaming performance (VRAM checked separately in Games). The 3D test is a heavy compute scene and may rank cards differently. Close games and heavy apps first; a full run takes about a minute." TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+            <TextBlock Text="Compare against" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <ComboBox ItemsSource="{Binding State.ComparePresetOptions}" DisplayMemberPath="Label"
+                      SelectedValuePath="Id" SelectedValue="{Binding State.ComparePresetId, Mode=TwoWay}"
+                      MinWidth="140" />
+        </StackPanel>
+        <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0" Text="{Binding IndexCaption}" TextWrapping="Wrap" />
 
         <ui:Card Margin="0,16,0,0">
             <StackPanel>
