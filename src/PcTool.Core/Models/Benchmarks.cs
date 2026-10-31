@@ -10,7 +10,10 @@ public enum BenchmarkKind
     DiskSequentialWrite,
     DiskRandomRead4K,
     DiskRandomWrite4K,
-    Gpu3D
+    /// <summary>Offscreen raymarched scene at 1440p (no window).</summary>
+    Gpu3D,
+    /// <summary>Offscreen raster arena at 1440p; use the preview window to watch the same scene.</summary>
+    Gpu3DArena,
 }
 
 public sealed record BenchmarkResult(

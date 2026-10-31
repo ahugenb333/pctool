@@ -41,7 +41,8 @@ public sealed class BenchmarkSuite
         }
         if (options.Gpu)
         {
-            stages.Add(("GPU 3D", _ => [GpuBenchmark.Run(Scaled(8), ct)]));
+            stages.Add(("GPU 3D headless", _ => [GpuBenchmark.Run(Scaled(8), ct)]));
+            stages.Add(("GPU 3D arena", _ => [GpuRasterBenchmark.Run(Scaled(8), ct)]));
         }
 
         for (var i = 0; i < stages.Count; i++)

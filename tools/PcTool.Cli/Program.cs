@@ -38,6 +38,43 @@ switch (command)
         PrintSpecs(specs);
         break;
     }
+    case "gpu-frames":
+    {
+        var dir = Opt("--out") ?? Path.Combine(Path.GetTempPath(), "pctool-gpu-frames");
+        var count = Math.Clamp(IntOpt("--count") ?? 36, 1, 120);
+        var fps = Math.Clamp(IntOpt("--fps") ?? 12, 1, 30);
+        Directory.CreateDirectory(dir);
+        foreach (var old in Directory.EnumerateFiles(dir, "frame_*.bmp")) File.Delete(old);
+
+        using var session = new GpuStressSession();
+        var width = GpuStressSession.PreviewWidth;
+        var height = GpuStressSession.PreviewHeight;
+        var pixels = new byte[width * height * 4];
+        var pin = System.Runtime.InteropServices.GCHandle.Alloc(pixels, System.Runtime.InteropServices.GCHandleType.Pinned);
+        try
+        {
+            var interval = TimeSpan.FromSeconds(1.0 / fps);
+            var lastVersion = -1;
+            for (var i = 0; i < count; i++)
+            {
+                var started = System.Diagnostics.Stopwatch.StartNew();
+                int version;
+                while (!session.CopyPreview(pin.AddrOfPinnedObject(), width * 4, out version) || version == lastVersion)
+                    Thread.Sleep(5);
+                lastVersion = version;
+                WriteBgraBmp(Path.Combine(dir, $"frame_{i:000}.bmp"), pixels, width, height);
+                var remain = interval - started.Elapsed;
+                if (remain > TimeSpan.Zero) Thread.Sleep(remain);
+            }
+        }
+        finally
+        {
+            pin.Free();
+        }
+
+        Console.WriteLine(dir);
+        break;
+    }
     case "bench":
     {
         var quick = args.Contains("--quick");
@@ -110,10 +147,38 @@ switch (command)
         break;
     }
     default:
-        Console.WriteLine("usage: pctool-cli profile | bench [--quick] [--no-disk] [--no-gpu] | games | upgrades [--goal G] [--budget N] [--game id]");
+        Console.WriteLine("usage: pctool-cli profile | bench [--quick] [--no-disk] [--no-gpu] | gpu-frames [--out dir] [--count N] [--fps N]");
+        Console.WriteLine("                  | games | upgrades [--goal G] [--budget N] [--game id]");
         Console.WriteLine("                  | check --part text | diag [--game id] [--exe name.exe]");
         Console.WriteLine("overrides: --chipset B550 --psu 750 --case ATX --gpu-len 330 --m2 1");
         break;
+}
+
+static void WriteBgraBmp(string path, byte[] bgra, int width, int height)
+{
+    var row = width * 4;
+    var pixelBytes = row * height;
+    const int header = 54;
+    using var stream = File.Create(path);
+    using var writer = new BinaryWriter(stream);
+    writer.Write((byte)'B');
+    writer.Write((byte)'M');
+    writer.Write(header + pixelBytes);
+    writer.Write(0);
+    writer.Write(header);
+    writer.Write(40);
+    writer.Write(width);
+    writer.Write(height);
+    writer.Write((short)1);
+    writer.Write((short)32);
+    writer.Write(0);
+    writer.Write(pixelBytes);
+    writer.Write(0);
+    writer.Write(0);
+    writer.Write(0);
+    writer.Write(0);
+    for (var y = height - 1; y >= 0; y--)
+        writer.Write(bgra, y * row, row);
 }
 
 static void PrintSpecs(SystemSpecs s)
