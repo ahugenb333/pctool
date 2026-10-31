@@ -13,13 +13,15 @@ namespace PcTool.Benchmarks;
 /// <summary>
 /// Renders a raymarched scene (soft shadows, many SDF evaluations per pixel) offscreen at 2560x1440 with Direct3D 11
 /// on the high-performance adapter. Event queries keep up to three frames in flight so the count reflects real GPU
-/// completion, not CPU submission. Score is normalized so an RTX 3060 12GB = 100, matching the tier database.
+/// completion, not CPU submission. Each frame waits on its GPU event query before counting so pipelining cannot
+/// inflate FPS. Score is normalized so an RTX 3060 12GB = 100 on the tier raster index (calibrated from a known GPU).
 /// </summary>
 public static class GpuBenchmark
 {
     public const int Width = 2560;
     public const int Height = 1440;
-    internal const double ReferenceFps = 139.1; // RTX 3060 12GB equivalent, calibrated on an RTX 3070
+    // Implied RTX 3060 12GB FPS on this scene: ReferenceFps. Calibrated as measuredFps * 100 / tierScore on an RTX 3070 (140).
+    internal const double ReferenceFps = 261.6;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct FrameConstants
@@ -61,16 +63,13 @@ public static class GpuBenchmark
                 void RenderFrame(float time)
                 {
                     var slot = (int)(frames % queries.Length);
-                    if (frames >= queries.Length)
-                    {
-                        while (!context.IsDataAvailable(queries[slot])) Thread.SpinWait(32);
-                    }
                     frame.Time = time;
                     context.UpdateSubresource(in frame, constants);
                     context.ClearRenderTargetView(rtv, new Color4(0, 0, 0, 1));
                     context.Draw(3, 0);
                     context.End(queries[slot]);
                     context.Flush();
+                    while (!context.IsDataAvailable(queries[slot])) Thread.SpinWait(32);
                     frames++;
                 }
 

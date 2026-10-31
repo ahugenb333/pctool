@@ -122,7 +122,9 @@ public sealed partial class OverviewViewModel : ObservableObject
         {
             var primary = g == p.PrimaryGpu;
             var score = primary
-                ? s.GpuTier is not null || s.GpuScoreFromBenchmark ? $"Score {s.GpuScore:F0} · {s.GpuTier?.Upscaling switch { null or "" => "no upscaler", var u => u }}" : "Not in the tier database - run a benchmark"
+                ? s.GpuTier is not null || s.GpuScoreFromBenchmark
+                    ? $"Score {s.GpuScore:F0} · {(g.IsIntegrated ? "shared memory" : $"{g.VramGb:F0} GB VRAM")} · {s.GpuTier?.Upscaling switch { null or "" => "no upscaler", var u => u }}"
+                    : "Not in the tier database - run a benchmark"
                 : null;
             Sections.Add(new(primary ? "Graphics" : "Graphics (secondary)", SymbolRegular.Video24, g.Name, score,
             [
