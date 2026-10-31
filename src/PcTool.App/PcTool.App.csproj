@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>PcTool</AssemblyName>
+    <RootNamespace>PcTool.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Product>PcTool</Product>
+    <Description>Hardware profile, benchmarks, game compatibility, diagnostics and upgrade advice for Windows PCs.</Description>
+  </PropertyGroup>
+
+  <!-- Release build: dotnet publish src/PcTool.App -p:PublishProfile=win-x64 (settings in Properties/PublishProfiles). -->
+
+  <ItemGroup>
+    <None Include="..\..\THIRD-PARTY-NOTICES.txt" Link="THIRD-PARTY-NOTICES.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PcTool.Core\PcTool.Core.csproj" />
+    <ProjectReference Include="..\PcTool.Data\PcTool.Data.csproj" />
+    <ProjectReference Include="..\PcTool.Hardware\PcTool.Hardware.csproj" />
+    <ProjectReference Include="..\PcTool.Benchmarks\PcTool.Benchmarks.csproj" />
+    <ProjectReference Include="..\PcTool.Compatibility\PcTool.Compatibility.csproj" />
+    <ProjectReference Include="..\PcTool.Games\PcTool.Games.csproj" />
+    <ProjectReference Include="..\PcTool.Diagnostics\PcTool.Diagnostics.csproj" />
+    <ProjectReference Include="..\PcTool.Upgrades\PcTool.Upgrades.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

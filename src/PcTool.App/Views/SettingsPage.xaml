@@ -1,0 +1,100 @@
+<Page x:Class="PcTool.App.Views.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      x:Name="Root"
+      Title="Settings"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <Page.Resources>
+        <DataTemplate x:Key="NoticeTemplate">
+            <StackPanel Margin="0,0,0,10">
+                <TextBlock>
+                    <Run Text="{Binding Name, Mode=OneWay}" FontWeight="SemiBold" />
+                    <Run Text=" - " /><Run Text="{Binding License, Mode=OneWay}" />
+                </TextBlock>
+                <TextBlock Text="{Binding Notice}" Style="{StaticResource Caption}" />
+                <TextBlock Style="{StaticResource Caption}">
+                    <Hyperlink Command="{Binding DataContext.OpenLinkCommand, RelativeSource={RelativeSource AncestorType=Page}}" CommandParameter="{Binding Url}">
+                        <Run Text="{Binding Url, Mode=OneWay}" />
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <StackPanel Margin="24,12,24,24" MaxWidth="900" HorizontalAlignment="Left">
+        <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold" />
+
+        <TextBlock Text="Details PcTool can't detect" Style="{StaticResource SectionHeader}" />
+        <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,8"
+                   Text="These make compatibility checks and upgrade advice exact. Leave a field blank if you don't know it; checks that need it will say so." />
+        <ui:Card>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Motherboard chipset" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Margin="0,4">
+                    <ComboBox ItemsSource="{Binding Chipsets}" Text="{Binding Chipset}" IsEditable="True" Width="200" HorizontalAlignment="Left" />
+                    <TextBlock Text="{Binding DetectedChipset}" Style="{StaticResource Caption}" Margin="0,4,0,0" />
+                </StackPanel>
+
+                <TextBlock Grid.Row="1" Text="Power supply (watts)" VerticalAlignment="Center" />
+                <ui:TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PsuWatts}" PlaceholderText="e.g. 650 - printed on the PSU label" Width="300" HorizontalAlignment="Left" Margin="0,4" />
+
+                <TextBlock Grid.Row="2" Text="Case size" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding CaseSizes}" SelectedItem="{Binding CaseFormFactor}" Width="200" HorizontalAlignment="Left" Margin="0,4" />
+
+                <TextBlock Grid.Row="3" Text="Max GPU length in case (mm)" VerticalAlignment="Center" />
+                <ui:TextBox Grid.Row="3" Grid.Column="1" Text="{Binding CaseMaxGpuLength}" PlaceholderText="From the case spec sheet" Width="300" HorizontalAlignment="Left" Margin="0,4" />
+
+                <TextBlock Grid.Row="4" Text="Free M.2 slots" VerticalAlignment="Center" />
+                <ui:TextBox Grid.Row="4" Grid.Column="1" Text="{Binding FreeM2Slots}" PlaceholderText="0, 1, 2..." Width="300" HorizontalAlignment="Left" Margin="0,4" />
+
+                <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,12,0,0">
+                    <ui:Button Content="Save" Appearance="Primary" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" />
+                    <TextBlock Text="{Binding SavedMessage}" Style="{StaticResource Caption}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
+        <TextBlock Text="Sensors and permissions" Style="{StaticResource SectionHeader}" />
+        <ui:Card>
+            <StackPanel>
+                <TextBlock Text="{Binding ElevationText}" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding PawnIoText}" Style="{StaticResource Caption}" Margin="0,4,0,0" />
+                <ui:Button Content="Restart as administrator" Icon="{ui:SymbolIcon ShieldKeyhole24}" Command="{Binding RestartElevatedCommand}" Margin="0,12,0,0"
+                           Visibility="{Binding IsElevated, Converter={StaticResource InverseBoolToVisibility}}" />
+            </StackPanel>
+        </ui:Card>
+
+        <TextBlock Text="Your data" Style="{StaticResource SectionHeader}" />
+        <ui:Card>
+            <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Content="Open folder" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding OpenDataFolderCommand}" />
+                <StackPanel>
+                    <TextBlock Text="Settings and benchmark history are stored locally. Nothing is uploaded." TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding DataFolder}" Style="{StaticResource Caption}" />
+                </StackPanel>
+            </DockPanel>
+        </ui:Card>
+
+        <TextBlock Text="Data sources" Style="{StaticResource SectionHeader}" />
+        <ItemsControl ItemsSource="{Binding DataNotices}" ItemTemplate="{StaticResource NoticeTemplate}" />
+
+        <TextBlock Text="Open-source libraries" Style="{StaticResource SectionHeader}" />
+        <ItemsControl ItemsSource="{Binding LibraryNotices}" ItemTemplate="{StaticResource NoticeTemplate}" />
+        <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0"
+                   Text="Full license texts are in THIRD-PARTY-NOTICES.txt next to PcTool.exe." />
+    </StackPanel>
+</Page>

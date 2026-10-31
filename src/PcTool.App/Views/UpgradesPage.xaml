@@ -1,0 +1,110 @@
+<Page x:Class="PcTool.App.Views.UpgradesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="Upgrades"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <Page.Resources>
+        <DataTemplate x:Key="CandidateTemplate">
+            <Border Margin="0,0,0,8" CornerRadius="6" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions>
+                    <Border Background="{Binding Status, Converter={StaticResource CheckStatusToBrush}}" CornerRadius="6,0,0,6" />
+                    <StackPanel Grid.Column="1" Margin="14,10">
+                        <TextBlock Text="{Binding Tier}" Style="{StaticResource Caption}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                   Visibility="{Binding Tier, Converter={StaticResource NullToCollapsed}}" />
+                        <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding Reason}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                        <TextBlock Text="{Binding PartsList}" Style="{StaticResource Caption}" Margin="0,2,0,0" />
+                        <TextBlock Text="{Binding Unlocks}" Style="{StaticResource Caption}" Margin="0,2,0,0"
+                                   Visibility="{Binding Unlocks, Converter={StaticResource NullToCollapsed}}" />
+                        <TextBlock Text="{Binding Caveats}" Style="{StaticResource Caption}" Margin="0,4,0,0" Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrush}}"
+                                   Visibility="{Binding Caveats, Converter={StaticResource NullToCollapsed}}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="0,10,14,10" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding Gain}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                        <TextBlock Text="{Binding Price}" HorizontalAlignment="Right" />
+                        <TextBlock Text="{Binding Value}" Style="{StaticResource Caption}" HorizontalAlignment="Right" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
+
+    <StackPanel Margin="24,12,24,24">
+        <TextBlock Text="Upgrade advisor" FontSize="28" FontWeight="SemiBold" />
+        <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0"
+                   Text="Finds what's holding your PC back for a goal, then ranks compatible upgrades by performance gained per dollar and the games they unlock." />
+
+        <ui:Card Margin="0,16,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="280" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="160" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="Goal" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding Goals}" SelectedItem="{Binding SelectedGoal}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,0,12,0" Visibility="{Binding IsGameGoal, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="Game" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding GameList}" SelectedItem="{Binding SelectedGame}" DisplayMemberPath="Name" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Budget (USD)" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <ui:TextBox Text="{Binding Budget, UpdateSourceTrigger=PropertyChanged, Delay=400}" />
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
+        <ui:InfoBar Title="This looks like a laptop" Severity="Informational" IsOpen="True" IsClosable="False" Margin="0,12,0,0"
+                    Message="Laptop CPUs and GPUs are soldered, so only RAM (on models with slots) and storage can be upgraded."
+                    Visibility="{Binding IsLaptop, Converter={StaticResource BoolToVisibility}}" />
+
+        <TextBlock Text="Bottleneck" Style="{StaticResource SectionHeader}" />
+        <TextBlock Text="{Binding BottleneckSummary}" TextWrapping="Wrap" Margin="0,0,0,8" />
+        <ItemsControl ItemsSource="{Binding Ratios}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="70" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Component}" />
+                        <ProgressBar Grid.Column="1" Value="{Binding Bar, Mode=OneWay}" Maximum="100" Height="8" VerticalAlignment="Center"
+                                     Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrush}}" />
+                        <TextBlock Grid.Column="2" Text="{Binding Text}" HorizontalAlignment="Right" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Text="Bars show how each component compares to what the goal needs; the midpoint is 100%." Style="{StaticResource Caption}" Margin="0,4,0,0" />
+
+        <TextBlock Text="Top picks" Style="{StaticResource SectionHeader}" />
+        <TextBlock Text="No upgrade within budget gives a meaningful gain for this goal. Try a higher budget or another goal.">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource Caption}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Picks.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <ItemsControl ItemsSource="{Binding Picks}" ItemTemplate="{StaticResource CandidateTemplate}" />
+
+        <TextBlock Text="All compatible options" Style="{StaticResource SectionHeader}" />
+        <ItemsControl ItemsSource="{Binding Candidates}" ItemTemplate="{StaticResource CandidateTemplate}" />
+
+        <TextBlock Text="{Binding PriceNote}" Style="{StaticResource Caption}" Margin="0,8,0,0" />
+    </StackPanel>
+</Page>

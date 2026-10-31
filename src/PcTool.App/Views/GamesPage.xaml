@@ -1,0 +1,53 @@
+<Page x:Class="PcTool.App.Views.GamesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="Games"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <StackPanel Margin="24,12,24,24">
+        <TextBlock Text="Can I run it?" FontSize="28" FontWeight="SemiBold" />
+        <TextBlock Text="{Binding Summary}" Style="{StaticResource Caption}" Margin="0,4,0,0" />
+
+        <Grid Margin="0,16,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Search games..."
+                        Icon="{ui:SymbolIcon Search24}" Margin="0,0,12,0" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Genres}" SelectedItem="{Binding SelectedGenre}" Margin="0,0,12,0" />
+            <ui:ToggleSwitch Grid.Column="2" Content="Only games that run well" IsChecked="{Binding OnlyRunsWell}" />
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding Games}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,0,0,8" CornerRadius="6" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="180" />
+                            </Grid.ColumnDefinitions>
+                            <Border Background="{Binding Level, Converter={StaticResource VerdictToBrush}}" CornerRadius="6,0,0,6" />
+                            <StackPanel Grid.Column="1" Margin="14,10">
+                                <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding Meta}" Style="{StaticResource Caption}" />
+                                <TextBlock Text="{Binding Bottleneck}" Margin="0,6,0,0" />
+                                <TextBlock Text="{Binding Notes}" Style="{StaticResource Caption}" Margin="0,2,0,0"
+                                           Visibility="{Binding Notes, Converter={StaticResource NullToCollapsed}}" />
+                                <TextBlock Text="{Binding Requirements}" Style="{StaticResource Caption}" Margin="0,2,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,10,14,10" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding LevelText}" FontWeight="SemiBold" HorizontalAlignment="Right"
+                                           Foreground="{Binding Level, Converter={StaticResource VerdictToBrush}}" />
+                                <TextBlock Text="{Binding Settings}" FontSize="16" HorizontalAlignment="Right" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Page>

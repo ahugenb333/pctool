@@ -12,8 +12,9 @@ namespace PcTool.Benchmarks;
 public static class CpuBenchmark
 {
     // Iterations/second of each workload on the reference CPU (Ryzen 5 5600X equivalents, calibrated on a 5800XT).
-    internal static readonly double[] SingleReference = [635.4, 140.4, 342.9];
-    internal static readonly double[] MultiReference = [6121, 1282.4, 2280.8];
+    // Measured from a Release build; Debug builds run the integer and floating-point workloads ~4x slower.
+    internal static readonly double[] SingleReference = [2634.4, 402.0, 354.3];
+    internal static readonly double[] MultiReference = [26127, 3880.2, 2127.0];
 
     private static readonly Func<long>[] Workloads = [IntegerHash, Mandelbrot, Compress];
     private static readonly string[] WorkloadNames = ["Integer", "Floating point", "Compression"];
