@@ -119,8 +119,9 @@ public sealed partial class BenchmarksViewModel : ObservableObject
                 BenchmarkKind.Gpu3D => s?.GpuTier?.Score,
                 _ => null,
             };
+            var displayScore = r.Kind == BenchmarkKind.Gpu3D && s?.GpuTier is { } gt ? gt.Score : r.Score;
             string? note = null;
-            if (typical is { } t && r.Score is { } score)
+            if (typical is { } t && displayScore is { } score)
             {
                 var ratio = score / t;
                 note = ratio switch
@@ -128,17 +129,21 @@ public sealed partial class BenchmarksViewModel : ObservableObject
                     < 0.85 => r.Kind == BenchmarkKind.Gpu3D
                         ? "Well below typical. Check GPU temperatures, the power plan, and that the monitor is plugged into the graphics card."
                         : "Well below typical. Check CPU temperatures, the power plan, and close background apps.",
-                    > 1.15 => "Above typical - nicely tuned or overclocked.",
+                    > 1.15 => r.Kind == BenchmarkKind.Gpu3D
+                        ? "Above typical on the raster index."
+                        : "Above typical - nicely tuned or overclocked.",
                     _ => "In line with typical results for this part.",
                 };
+                if (r.Kind == BenchmarkKind.Gpu3D && r.Score is { } synth && Math.Abs(synth - t) > 10)
+                    note = $"{note} This raymarch test scored {synth:F0}; tier index {t:F0} (VRAM is separate).";
             }
             Results.Add(new BenchmarkRow(
                 Label(r.Kind),
                 $"{r.Value:#,0.#} {r.Unit}",
-                r.Score is { } sc ? sc.ToString("F0") : "-",
+                displayScore is { } sc ? sc.ToString("F0") : "-",
                 typical is { } tt ? $"typical {tt:F0}" : "",
                 note,
-                Math.Clamp((r.Score ?? 0) / 300, 0, 1)));
+                Math.Clamp((displayScore ?? 0) / 300, 0, 1)));
         }
     }
 
