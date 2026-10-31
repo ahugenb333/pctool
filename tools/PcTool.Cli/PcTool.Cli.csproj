@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>pctool-cli</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PcTool.Core\PcTool.Core.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Data\PcTool.Data.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Hardware\PcTool.Hardware.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Benchmarks\PcTool.Benchmarks.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Compatibility\PcTool.Compatibility.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Games\PcTool.Games.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Diagnostics\PcTool.Diagnostics.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Upgrades\PcTool.Upgrades.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PcTool.Core\PcTool.Core.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Data\PcTool.Data.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Compatibility\PcTool.Compatibility.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Games\PcTool.Games.csproj" />
+    <ProjectReference Include="..\..\src\PcTool.Upgrades\PcTool.Upgrades.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

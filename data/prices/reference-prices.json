@@ -1,0 +1,47 @@
+{
+  "_note": "Approximate USD launch MSRP / typical list price, compiled by PcTool for ranking only. Not live street prices; swap in an IPriceSource backed by a retailer feed for real pricing.",
+  "currency": "USD",
+  "prices": {
+    "cpu-r5-9600x": 279, "cpu-r7-9700x": 359, "cpu-r7-9800x3d": 479, "cpu-r9-9900x": 499, "cpu-i5-14600k": 319, "cpu-cu7-265k": 394,
+    "amd-ryzen-9-9950x3d2-dual-edition": 899, "amd-ryzen-9-9950x3d": 699, "amd-ryzen-9-9950x": 649, "amd-ryzen-9-9900x3d": 599, "amd-ryzen-7-9850x3d": 499,
+    "cpu-intel-core-ultra-9-285k": 589, "cpu-intel-core-ultra-7-265kf": 379, "cpu-intel-core-ultra-5-245kf": 294, "cpu-intel-core-ultra-5-225f": 221, "cpu-intel-core-ultra-5-225": 236,
+    "cpu-intel-core-i7-14700k": 409, "cpu-intel-core-i7-14700kf": 384, "cpu-intel-core-i9-14900k": 589, "cpu-intel-core-i9-14900kf": 564,
+    "amd-ryzen-9-7950x3d": 699, "amd-ryzen-9-7950x": 549, "amd-ryzen-9-7900x": 399, "amd-ryzen-9-7900": 429, "amd-ryzen-7-7800x3d": 449, "amd-ryzen-7-7700x": 299,
+    "amd-ryzen-5-7600x": 229, "amd-ryzen-5-7600": 199, "amd-ryzen-7-8700g": 329, "amd-ryzen-5-8600g": 229,
+    "pt-cpu-r5-5600": 129, "pt-cpu-r7-5700x": 169, "pt-cpu-r7-5700x3d": 249, "pt-cpu-r7-5800x3d": 329, "pt-cpu-r9-5950x": 349,
+    "pt-cpu-i5-12400f": 129, "pt-cpu-i5-13400f": 189, "pt-cpu-i5-14400f": 199,
+
+    "gpu-rtx-5060-ti-16gb": 429, "gpu-rx-9060-xt-16gb": 349, "gpu-rtx-5070": 549, "gpu-rtx-5070-ti-16gb": 749, "gpu-rtx-5080-fe": 999, "gpu-rog-astral-5080-oc": 1499,
+    "gpu-nvidia-asus-rog-astral-rtx5090-o32g": 2799, "gpu-nvidia-asus-tuf-rtx5080-o16g": 1299, "gpu-nvidia-asus-prime-rtx5070-o12g": 599,
+    "gpu-nvidia-asus-tuf-rtx5060ti-o8g": 429, "gpu-nvidia-asus-dual-rtx5060ti-o8g": 379, "gpu-nvidia-asus-dual-rtx5060-o8g": 299,
+    "gpu-nvidia-asus-dual-rtx5050-8g": 249, "gpu-nvidia-asus-prime-rtx5050-o8g": 269,
+    "gpu-amd-radeon-rx-9070-xt-16gb": 599, "gpu-amd-radeon-rx-9070-16gb": 549, "gpu-amd-radeon-rx-9070-gre-12gb": 479, "gpu-amd-radeon-rx-9060-xt-8gb": 299,
+    "gpu-amd-radeon-rx-7900-xtx-24gb": 899, "gpu-amd-radeon-rx-7900-gre-16gb": 549, "gpu-amd-radeon-rx-7800-xt-16gb": 499, "gpu-amd-radeon-rx-7700-xt-12gb": 399,
+    "gpu-amd-radeon-rx-7600-8gb": 249, "gpu-intel-arc-b580-12gb": 249, "gpu-intel-arc-b570-10gb": 219,
+    "pt-gpu-rtx-4060": 299, "pt-gpu-rx-7600-xt": 329,
+
+    "mb-b650-tomahawk": 219, "mb-b850-edge": 279, "mb-x870e-hero": 699, "mb-z890-tomahawk": 349, "mb-z790-tomahawk": 289, "mb-asrock-a620am-x": 89,
+    "mb-asrock-b860-pro-rs": 159, "mb-asrock-b860m-x-gen5-wifi": 149, "mb-asrock-b860i-wifi": 199, "mb-asus-rog-strix-b860-i-gaming-wifi": 269,
+    "mb-asus-prime-b860-plus-wifi-csm": 179, "mb-asus-prime-z890-p-wifi": 249, "mb-asus-tuf-gaming-x870-plus-wifi": 299, "mb-asus-tuf-gaming-b850-plus-wifi": 219,
+    "mb-asus-rog-strix-b850-i-gaming-wifi": 299, "mb-asus-rog-strix-b650-a-gaming-wifi": 229,
+
+    "ram-ddr5-32gb-6000": 119, "ram-ddr5-64gb-6000": 219, "corsair-vengeance-ddr5-6000-cl36-16gb": 69, "corsair-vengeance-ddr5-6000-cl36-32gb": 109,
+    "gskill-flare-x5-ddr5-6000-cl36-32gb": 104, "teamgroup-tforce-delta-rgb-ddr5-6000-cl30-32gb": 114, "corsair-vengeance-rgb-rs-ddr5-6000-cl40-64gb": 189,
+    "gskill-trident-z5-ck-rgb-ddr5-8200-cl40-48gb": 299, "gskill-trident-z5-neo-rgb-ddr5-6000-cl36-64gb": 209, "gskill-flare-x5-ddr5-6000-cl30-64gb": 219,
+    "gskill-trident-z5-rgb-ddr5-6400-cl32-96gb": 339, "gskill-trident-z5-neo-rgb-ddr5-6000-cl28-96gb": 379, "gskill-trident-z5-neo-rgb-ddr5-6000-cl36-128gb": 499,
+    "pt-ram-ddr4-16gb-3200": 39, "pt-ram-ddr4-32gb-3600": 69, "pt-ram-ddr4-64gb-3600": 129,
+
+    "ssd-sn850x-2tb": 159, "ssd-t705-2tb": 279, "ssd-sn850x-4tb": 299, "samsung-9100-pro-1tb": 199, "samsung-9100-pro-2tb": 299, "samsung-9100-pro-4tb": 549,
+    "samsung-990-pro-1tb": 119, "samsung-990-pro-4tb": 329, "samsung-990-evo-plus-4tb": 279, "samsung-870-evo-2tb": 179, "wd-blue-sa510-2tb": 119,
+    "wd-black-sn8100-2tb": 279, "wd-black-sn8100-4tb": 549, "wd-black-sn850x-8tb": 849, "wd-black-sn7100-1tb": 79,
+    "pt-ssd-nvme-gen3-1tb": 59, "pt-ssd-sata-1tb": 59,
+
+    "psu-750w-gold": 109, "psu-850w-gold": 139, "psu-1000w-plat": 259, "psu-bequiet-dark-power-13-750w": 239, "psu-bequiet-power-zone-2-1000w": 179,
+    "psu-thermaltake-toughpower-gt-850w": 149, "psu-coolermaster-mwe-gold-850-v3": 119, "psu-nzxt-c1000-gold-atx31": 169, "psu-asus-rog-strix-1000w-platinum": 279,
+    "psu-lianli-sp750-v2-gold": 129, "psu-asrock-pg-1600g": 399, "psu-msi-mpg-a850gs-pcie5": 129, "pt-psu-650w-gold": 79,
+
+    "case-h7-flow": 139, "case-meshify-2": 109, "case-pop-air-mini": 79, "case-o11-d-evo": 189, "case-corsair-frame-4000d-rs-argb": 109, "case-nzxt-h5-flow-2024": 99,
+    "case-lian-li-vector-v100rx": 99, "case-thermaltake-view-270-plus-tg-argb": 119, "case-montech-xr-black": 89, "case-bequiet-pure-base-501-black": 99,
+    "case-cooler-master-q300l": 49, "case-lian-li-a3-matx-black": 79, "case-cooler-master-nr200": 89, "case-fractal-design-ridge-black": 129, "case-fractal-design-terra-jade": 179
+  }
+}
