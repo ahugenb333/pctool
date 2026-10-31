@@ -20,7 +20,7 @@ Everything under `data/` is embedded into `PcTool.Data`; rebuild after edits.
 
 **Tier ids** are `NameMatcher.Slug(name)`: lowercase, non-alphanumerics to `-`. "RTX 4070 Super" -> `rtx-4070-super`, "Core i5-13600K" -> `core-i5-13600k`.
 
-**Scores**: CPU single/multi indexed to Ryzen 5 5600X = 100; GPU raster indexed to RTX 3060 12GB = 100. Place new parts relative to neighbours from aggregate review consensus. Never copy PassMark or other proprietary benchmark databases.
+**Scores**: CPU single/multi indexed to Ryzen 5 5600X = 100; GPU raster indexed to RTX 3060 12GB = 100. Place new parts relative to neighbours from aggregate review consensus. Never copy PassMark or other proprietary benchmark databases. Overview and Benchmarks can rescale display via `ComparePresets` (Potato / Budget / Beast); game and upgrade engines always use canonical tier scores.
 
 ### Add a GPU — `data/tiers/gpus.csv`
 

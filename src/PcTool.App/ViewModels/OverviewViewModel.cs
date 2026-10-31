@@ -107,8 +107,9 @@ public sealed partial class OverviewViewModel : ObservableObject
         Sections.Clear();
         if (State.Profile is not { } p || State.Specs is not { } s) return;
 
+        var idx = State.CompareScale;
         var cpuScore = s.CpuTier is not null || s.CpuScoreFromBenchmark
-            ? $"Single {s.CpuSingleScore:F0} · Multi {s.CpuMultiScore:F0} · Gaming {s.CpuGamingScore:F0}"
+            ? $"Single {idx.IndexCpuSingle(s.CpuSingleScore):F0} · Multi {idx.IndexCpuMulti(s.CpuMultiScore):F0} · Gaming {idx.IndexCpuGaming(s.CpuGamingScore):F0} vs {idx.Preset.Label}"
             : "Not in the tier database - run a benchmark";
         Sections.Add(new("Processor", SymbolRegular.DeveloperBoard24, p.Cpu.Name, cpuScore,
         [
@@ -123,7 +124,7 @@ public sealed partial class OverviewViewModel : ObservableObject
             var primary = g == p.PrimaryGpu;
             var score = primary
                 ? s.GpuTier is not null || s.GpuScoreFromBenchmark
-                    ? $"Score {s.GpuScore:F0} · {(g.IsIntegrated ? "shared memory" : $"{g.VramGb:F0} GB VRAM")} · {s.GpuTier?.Upscaling switch { null or "" => "no upscaler", var u => u }}"
+                    ? $"Score {idx.IndexGpu(s.GpuScore):F0} vs {idx.Preset.Label} · {(g.IsIntegrated ? "shared memory" : $"{g.VramGb:F0} GB VRAM")} · {s.GpuTier?.Upscaling switch { null or "" => "no upscaler", var u => u }}"
                     : "Not in the tier database - run a benchmark"
                 : null;
             Sections.Add(new(primary ? "Graphics" : "Graphics (secondary)", SymbolRegular.Video24, g.Name, score,

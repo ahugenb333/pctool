@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using PcTool.Core;
 using PcTool.Core.Models;
 
 namespace PcTool.App.Services;
@@ -7,6 +8,8 @@ namespace PcTool.App.Services;
 public sealed class AppSettings
 {
     public UserSystemOverrides System { get; set; } = new();
+    /// <see cref="ComparePresets"/> id: potato, budget, beast.
+    public string ComparePresetId { get; set; } = ComparePresets.DefaultId;
     public decimal UpgradeBudgetUsd { get; set; } = 600;
     public string UpgradeGoal { get; set; } = "Gaming1440p";
 }

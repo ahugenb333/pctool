@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PcTool.App.Services;
 using PcTool.Benchmarks;
+using PcTool.Core;
 using PcTool.Core.Models;
 
 namespace PcTool.App.ViewModels;
@@ -37,14 +38,29 @@ public sealed partial class BenchmarksViewModel : ObservableObject
     [ObservableProperty] private string _stage = "";
     [ObservableProperty] private string? _error;
     [ObservableProperty] private string _resultsTitle = "No benchmark run yet";
+    [ObservableProperty] private string _indexCaption =
+        "Scores compare your PC to the Budget preset. Close games and heavy apps first; a full run takes about a minute.";
 
     public BenchmarksViewModel(AppState state, BenchmarkSuite suite)
     {
         State = state;
         _suite = suite;
-        state.SpecsChanged += (_, _) => ShowRun(state.Benchmarks.Latest);
+        state.SpecsChanged += (_, _) =>
+        {
+            UpdateIndexCaption();
+            ShowRun(state.Benchmarks.Latest);
+            RefreshHistory();
+        };
+        UpdateIndexCaption();
         ShowRun(state.Benchmarks.Latest);
         RefreshHistory();
+    }
+
+    private void UpdateIndexCaption()
+    {
+        var scale = State.CompareScale;
+        IndexCaption =
+            $"{scale.IndexCaption} GPU tier scores are raster gaming (VRAM checked in Games). The 3D test is compute-heavy. Close games and heavy apps first; a full run takes about a minute.";
     }
 
     [RelayCommand(CanExecute = nameof(CanRun))]
@@ -93,14 +109,31 @@ public sealed partial class BenchmarksViewModel : ObservableObject
     private void RefreshHistory()
     {
         History.Clear();
+        var scale = State.CompareScale;
         foreach (var r in State.Benchmarks.Runs.OrderByDescending(r => r.StartedAt).Take(10))
         {
             History.Add(new(r.StartedAt.ToLocalTime().ToString("g"),
-                Fmt(r.Get(BenchmarkKind.CpuSingleThread)), Fmt(r.Get(BenchmarkKind.CpuMultiThread)),
-                Fmt(r.Get(BenchmarkKind.Gpu3D)), Fmt(r.Get(BenchmarkKind.DiskSequentialRead))));
+                FmtCpu(scale, r.Get(BenchmarkKind.CpuSingleThread), BenchmarkKind.CpuSingleThread),
+                FmtCpu(scale, r.Get(BenchmarkKind.CpuMultiThread), BenchmarkKind.CpuMultiThread),
+                FmtGpu(scale, r.Get(BenchmarkKind.Gpu3D)),
+                Fmt(r.Get(BenchmarkKind.DiskSequentialRead))));
         }
 
         static string Fmt(BenchmarkResult? b) => b?.Score is { } s ? s.ToString("F0") : "-";
+
+        static string FmtCpu(CompareScale scale, BenchmarkResult? b, BenchmarkKind kind)
+        {
+            if (b?.Score is not { } s) return "-";
+            return kind == BenchmarkKind.CpuSingleThread
+                ? scale.IndexCpuSingle(s).ToString("F0")
+                : scale.IndexCpuMulti(s).ToString("F0");
+        }
+
+        string FmtGpu(CompareScale scale, BenchmarkResult? b)
+        {
+            if (State.Specs?.GpuTier is { } gt) return scale.IndexGpu(gt.Score).ToString("F0");
+            return b?.Score is { } s ? scale.IndexGpu(s).ToString("F0") : "-";
+        }
     }
 
     private void ShowRun(BenchmarkRun? run)
@@ -109,43 +142,62 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         if (run is null) return;
         ResultsTitle = $"Results from {run.StartedAt.ToLocalTime():g}";
         var s = State.Specs;
+        var scale = State.CompareScale;
+        var presetLabel = scale.Preset.Label;
 
         foreach (var r in run.Results)
         {
-            double? typical = r.Kind switch
-            {
-                BenchmarkKind.CpuSingleThread => s?.CpuTier?.SingleScore,
-                BenchmarkKind.CpuMultiThread => s?.CpuTier?.MultiScore,
-                BenchmarkKind.Gpu3D => s?.GpuTier?.Score,
-                _ => null,
-            };
-            var displayScore = r.Kind == BenchmarkKind.Gpu3D && s?.GpuTier is { } gt ? gt.Score : r.Score;
+            double? canonical = CanonicalScore(r, s);
+            var displayScore = IndexScore(scale, r.Kind, canonical);
+            var refLabel = r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread or BenchmarkKind.Gpu3D
+                ? $"{presetLabel} 100"
+                : "";
+
             string? note = null;
-            if (typical is { } t && displayScore is { } score)
+            if (displayScore is { } indexed && r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread or BenchmarkKind.Gpu3D)
             {
-                var ratio = score / t;
-                note = ratio switch
+                note = indexed switch
                 {
-                    < 0.85 => r.Kind == BenchmarkKind.Gpu3D
-                        ? "Well below typical. Check GPU temperatures, the power plan, and that the monitor is plugged into the graphics card."
-                        : "Well below typical. Check CPU temperatures, the power plan, and close background apps.",
-                    > 1.15 => r.Kind == BenchmarkKind.Gpu3D
-                        ? "Above typical on the raster index."
-                        : "Above typical - nicely tuned or overclocked.",
-                    _ => "In line with typical results for this part.",
+                    < 85 => r.Kind == BenchmarkKind.Gpu3D
+                        ? $"Below the {presetLabel} reference. Check GPU temperatures, power plan, and that the monitor uses the graphics card."
+                        : $"Below the {presetLabel} reference. Check CPU temperatures, power plan, and background apps.",
+                    > 115 => $"Above the {presetLabel} reference.",
+                    _ => $"In line with the {presetLabel} reference.",
                 };
-                if (r.Kind == BenchmarkKind.Gpu3D && r.Score is { } synth && Math.Abs(synth - t) > 10)
-                    note = $"{note} This raymarch test scored {synth:F0}; tier index {t:F0} (VRAM is separate).";
+                if (r.Kind == BenchmarkKind.Gpu3D && s?.GpuTier is { } gt && r.Score is { } synth)
+                {
+                    var synthIndexed = scale.IndexGpu(synth);
+                    var tierIndexed = scale.IndexGpu(gt.Score);
+                    if (Math.Abs(synthIndexed - tierIndexed) > 10)
+                        note = $"{note} Raymarch test {synthIndexed:F0} vs tier {tierIndexed:F0} (VRAM is separate).";
+                }
             }
+
             Results.Add(new BenchmarkRow(
                 Label(r.Kind),
                 $"{r.Value:#,0.#} {r.Unit}",
                 displayScore is { } sc ? sc.ToString("F0") : "-",
-                typical is { } tt ? $"typical {tt:F0}" : "",
+                refLabel,
                 note,
-                Math.Clamp((displayScore ?? 0) / 300, 0, 1)));
+                Math.Clamp((displayScore ?? 0) / 200, 0, 1)));
         }
     }
+
+    private static double? CanonicalScore(BenchmarkResult r, SystemSpecs? specs) => r.Kind switch
+    {
+        BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread => r.Score,
+        BenchmarkKind.Gpu3D when specs?.GpuTier is { } gt => gt.Score,
+        BenchmarkKind.Gpu3D => r.Score,
+        _ => r.Score,
+    };
+
+    private static double? IndexScore(CompareScale scale, BenchmarkKind kind, double? canonical) => kind switch
+    {
+        BenchmarkKind.CpuSingleThread when canonical is { } c => scale.IndexCpuSingle(c),
+        BenchmarkKind.CpuMultiThread when canonical is { } c => scale.IndexCpuMulti(c),
+        BenchmarkKind.Gpu3D when canonical is { } c => scale.IndexGpu(c),
+        _ => canonical,
+    };
 
     private static string Label(BenchmarkKind k) => k switch
     {
