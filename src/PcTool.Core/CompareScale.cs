@@ -12,6 +12,7 @@ public sealed class CompareScale
     public double GpuRef { get; init; } = 100;
     public string CpuName { get; init; } = "";
     public string GpuName { get; init; } = "";
+    public int PresetGpuVramGb { get; init; }
 
     public string IndexCaption =>
         $"Scores compare your PC to the {Preset.Label} preset ({Preset.Summary}). That reference scores 100 on CPU and GPU rows.";
@@ -37,6 +38,7 @@ public sealed class CompareScale
             GpuRef = gpu.Score,
             CpuName = cpu.Name,
             GpuName = gpu.Name,
+            PresetGpuVramGb = gpu.VramGb,
         };
     }
 
