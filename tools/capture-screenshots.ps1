@@ -6,7 +6,7 @@
   the window with PrintWindow, so it works while other windows cover it.
   Build first: dotnet build src/PcTool.App -c Release
 .EXAMPLE
-  powershell -ExecutionPolicy Bypass -File tools/capture-screenshots.ps1 -RunBenchmark
+  powershell -ExecutionPolicy Bypass -File tools/capture-screenshots.ps1 -OutDir docs/screenshots/readme -RunBenchmark -ClearBenchmarkHistory
 #>
 param(
     [string]$Exe = "src/PcTool.App/bin/Release/net8.0-windows/PcTool.exe",
@@ -14,8 +14,18 @@ param(
     [int]$Width = 1400,
     [int]$Height = 900,
     # Runs a full benchmark first so the Benchmarks page has results (about a minute).
-    [switch]$RunBenchmark
+    [switch]$RunBenchmark,
+    # Deletes local benchmark history so README shots do not show stale runs from before calibration fixes.
+    [switch]$ClearBenchmarkHistory
 )
+
+if ($ClearBenchmarkHistory) {
+    $hist = Join-Path $env:LOCALAPPDATA "PcTool\benchmarks.json"
+    if (Test-Path $hist) {
+        Remove-Item $hist -Force
+        Write-Host "cleared $hist"
+    }
+}
 
 $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
