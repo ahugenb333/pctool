@@ -18,6 +18,35 @@ Built with .NET 8, WPF and [WPF-UI](https://github.com/lepoco/wpfui).
 
 Scores are indexed so a **Ryzen 5 5600X = 100** (CPU) and an **RTX 3060 12GB = 100** (GPU).
 
+## Screenshots
+
+![Overview](docs/screenshots/overview.png)
+
+<details>
+<summary>More screenshots</summary>
+
+### Benchmarks
+![Benchmarks](docs/screenshots/benchmarks.png)
+
+### Games
+![Games](docs/screenshots/games.png)
+
+### Diagnostics
+![Diagnostics](docs/screenshots/diagnostics.png)
+
+### Compatibility
+![Compatibility](docs/screenshots/compatibility.png)
+
+### Upgrades
+![Upgrades](docs/screenshots/upgrades.png)
+
+### Settings
+![Settings](docs/screenshots/settings.png)
+
+</details>
+
+To refresh them, build in Release and run `tools/capture-screenshots.ps1 -RunBenchmark`. The app accepts `--page <Name>` (for example `--page Games`) to open on a specific page.
+
 ## Requirements
 
 - Windows 10 or 11, x64

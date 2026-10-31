@@ -1,0 +1,70 @@
+<Page x:Class="PcTool.App.Views.DiagnosticsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="Diagnostics"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <StackPanel Margin="24,12,24,24">
+        <TextBlock Text="Game diagnostics" FontSize="28" FontWeight="SemiBold" />
+        <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0"
+                   Text="Checks crash logs, GPU driver resets, hardware errors, runtimes, power and Windows settings, temperatures and background apps." />
+
+        <ui:Card Margin="0,16,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Text="Game" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding GameOptions}" SelectedItem="{Binding SelectedGame}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                    <TextBlock Text="Or executable name" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <ui:TextBox Text="{Binding ExecutableName, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="e.g. Game.exe" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="0,0,12,0">
+                    <TextBlock Text="Look back (days)" Style="{StaticResource Caption}" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding LookbackOptions}" SelectedItem="{Binding LookbackDays}" />
+                </StackPanel>
+                <ui:Button Grid.Column="3" Content="Run diagnostics" Icon="{ui:SymbolIcon Stethoscope24}" Appearance="Primary"
+                           Command="{Binding RunCommand}" VerticalAlignment="Bottom" />
+            </Grid>
+        </ui:Card>
+
+        <StackPanel Orientation="Horizontal" Margin="0,16,0,8">
+            <ui:ProgressRing IsIndeterminate="True" Width="18" Height="18" Margin="0,0,10,0"
+                             Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibility}}" />
+            <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <ItemsControl ItemsSource="{Binding Findings}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,0,0,8" CornerRadius="6" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Background="{Binding Severity, Converter={StaticResource SeverityToBrush}}" CornerRadius="6,0,0,6" />
+                            <StackPanel Grid.Column="1" Margin="14,10">
+                                <TextBlock Style="{StaticResource Caption}">
+                                    <Run Text="{Binding Category, Mode=OneWay}" /> · <Run Text="{Binding Severity, Mode=OneWay}" />
+                                </TextBlock>
+                                <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,2,0,0" />
+                                <TextBlock Text="{Binding Detail}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                                <TextBlock TextWrapping="Wrap" Margin="0,6,0,0" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                           Visibility="{Binding SuggestedFix, Converter={StaticResource NullToCollapsed}}">
+                                    <Run Text="Fix: " FontWeight="SemiBold" /><Run Text="{Binding SuggestedFix, Mode=OneWay}" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Page>

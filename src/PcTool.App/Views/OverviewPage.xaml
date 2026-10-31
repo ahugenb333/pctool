@@ -1,0 +1,87 @@
+<Page x:Class="PcTool.App.Views.OverviewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="Overview"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <StackPanel Margin="24,12,24,24">
+        <DockPanel LastChildFill="False">
+            <TextBlock DockPanel.Dock="Left" Text="Your PC" FontSize="28" FontWeight="SemiBold" />
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <ui:ProgressRing IsIndeterminate="True" Width="20" Height="20" Margin="0,0,12,0"
+                                 Visibility="{Binding State.IsProfiling, Converter={StaticResource BoolToVisibility}}" />
+                <ui:Button Content="Rescan" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding RefreshCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Copy specs" Icon="{ui:SymbolIcon Copy24}" Command="{Binding CopySummaryCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Export JSON" Icon="{ui:SymbolIcon Save24}" Command="{Binding ExportCommand}" Appearance="Primary" />
+            </StackPanel>
+        </DockPanel>
+        <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource Caption}" Margin="0,4,0,0"
+                   Visibility="{Binding StatusMessage, Converter={StaticResource NullToCollapsed}}" />
+
+        <ui:InfoBar Title="Couldn't read some hardware details" Message="{Binding State.ProfileError}" Severity="Error" IsOpen="True" IsClosable="False"
+                    Margin="0,12,0,0" Visibility="{Binding State.ProfileError, Converter={StaticResource NullToCollapsed}}" />
+
+        <ItemsControl ItemsSource="{Binding Sections}" Margin="0,16,0,0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="2" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ui:Card Margin="0,0,12,12" VerticalAlignment="Stretch" VerticalContentAlignment="Top">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="{Binding Icon}" FontSize="18" Margin="0,0,8,0" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource Caption}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding Headline}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,6,0,2" />
+                            <TextBlock Text="{Binding Score}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Margin="0,0,0,6"
+                                       Visibility="{Binding Score, Converter={StaticResource NullToCollapsed}}" />
+                            <ItemsControl ItemsSource="{Binding Rows}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="130" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Label}" Style="{StaticResource Caption}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ui:Card>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Text="Live sensors" Style="{StaticResource SectionHeader}" />
+        <TextBlock Text="{Binding SensorNote}" Style="{StaticResource Caption}" Margin="0,0,0,8" />
+        <ItemsControl ItemsSource="{Binding Sensors}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="3" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,0,8,8" Padding="12,8" CornerRadius="6" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Value, StringFormat={}{0:0}}" FontSize="16" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding Unit}" Margin="4,0,0,0" VerticalAlignment="Bottom" Style="{StaticResource Caption}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Hardware}" Style="{StaticResource Caption}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</Page>

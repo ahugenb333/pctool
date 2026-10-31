@@ -85,16 +85,17 @@ public sealed class GameDiagnostics(ISensorMonitor sensors, GameAdvisor advisor)
         });
     }
 
-    private static void CheckCrashes(DiagnosticsRequest r, List<DiagnosticFinding> f)
+    private void CheckCrashes(DiagnosticsRequest r, List<DiagnosticFinding> f)
     {
         var crashes = CrashLogScanner.ReadAppCrashes(r.LookbackDays);
         var exe = r.Exe;
         var gameExes = r.Game?.Executables ?? (exe is null ? [] : [exe]);
+        var known = advisor.Games.SelectMany(g => g.Executables).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var relevant = gameExes.Length > 0
             ? crashes.Where(c => gameExes.Any(e => c.App.Equals(e, StringComparison.OrdinalIgnoreCase))).ToList()
-            : crashes;
+            : crashes.Where(c => known.Contains(c.App) || IsLikelyGame(c.App)).ToList();
 
-        var label = r.Game?.Name ?? exe ?? "any app";
+        var label = r.Game?.Name ?? exe ?? "your games";
         if (relevant.Count == 0)
         {
             var wer = exe is null ? 0 : CrashLogScanner.CountWerReports(exe, r.LookbackDays);
@@ -122,6 +123,10 @@ public sealed class GameDiagnostics(ISensorMonitor sensors, GameAdvisor advisor)
                 $"Likely cause: {cause}. Exception 0x{group.First().ExceptionCode}, last on {latest:g}.", fix));
         }
     }
+
+    /// <summary>Unreal Engine games ship as "Name-Win64-Shipping.exe", which covers many titles not in the catalog.</summary>
+    private static bool IsLikelyGame(string exe) =>
+        exe.EndsWith("-Shipping.exe", StringComparison.OrdinalIgnoreCase);
 
     private static void CheckDriverResets(DiagnosticsRequest r, List<DiagnosticFinding> f)
     {
