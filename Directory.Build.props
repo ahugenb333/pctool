@@ -6,7 +6,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Company>PcTool</Company>
     <Product>PcTool</Product>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
 </Project>

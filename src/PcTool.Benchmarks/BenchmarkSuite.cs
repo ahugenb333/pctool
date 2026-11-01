@@ -8,6 +8,8 @@ public sealed class BenchmarkOptions
     public bool Memory { get; init; } = true;
     public bool Disk { get; init; } = true;
     public bool Gpu { get; init; } = true;
+    /// <summary>Opens the live stress window on the same GPU session during the scored raymarch stage.</summary>
+    public bool ShowGpuStressDuringRun { get; init; } = true;
     /// <summary>Folder for the disk test file; defaults to the temp folder (usually on the system drive).</summary>
     public string? DiskDirectory { get; init; }
     public long DiskFileBytes { get; init; } = 512L * 1024 * 1024;
@@ -41,7 +43,8 @@ public sealed class BenchmarkSuite
         }
         if (options.Gpu)
         {
-            stages.Add(("GPU 3D headless", _ => [GpuBenchmark.Run(Scaled(8), ct)]));
+            GpuStressHub.ShowWindowDuringBenchmark = options.ShowGpuStressDuringRun;
+            stages.Add(("GPU 3D stress (1440p)", _ => [GpuBenchmark.Run(Scaled(8), ct)]));
             stages.Add(("GPU 3D arena", _ => [GpuRasterBenchmark.Run(Scaled(8), ct)]));
         }
 

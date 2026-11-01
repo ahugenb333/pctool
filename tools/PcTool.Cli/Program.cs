@@ -46,30 +46,37 @@ switch (command)
         Directory.CreateDirectory(dir);
         foreach (var old in Directory.EnumerateFiles(dir, "frame_*.bmp")) File.Delete(old);
 
-        using var session = new GpuStressSession();
-        var width = GpuStressSession.PreviewWidth;
-        var height = GpuStressSession.PreviewHeight;
-        var pixels = new byte[width * height * 4];
-        var pin = System.Runtime.InteropServices.GCHandle.Alloc(pixels, System.Runtime.InteropServices.GCHandleType.Pinned);
+        var session = GpuStressHub.Acquire();
         try
         {
-            var interval = TimeSpan.FromSeconds(1.0 / fps);
-            var lastVersion = -1;
-            for (var i = 0; i < count; i++)
+            var width = GpuStressSession.PreviewWidth;
+            var height = GpuStressSession.PreviewHeight;
+            var pixels = new byte[width * height * 4];
+            var pin = System.Runtime.InteropServices.GCHandle.Alloc(pixels, System.Runtime.InteropServices.GCHandleType.Pinned);
+            try
             {
-                var started = System.Diagnostics.Stopwatch.StartNew();
-                int version;
-                while (!session.CopyPreview(pin.AddrOfPinnedObject(), width * 4, out version) || version == lastVersion)
-                    Thread.Sleep(5);
-                lastVersion = version;
-                WriteBgraBmp(Path.Combine(dir, $"frame_{i:000}.bmp"), pixels, width, height);
-                var remain = interval - started.Elapsed;
-                if (remain > TimeSpan.Zero) Thread.Sleep(remain);
+                var interval = TimeSpan.FromSeconds(1.0 / fps);
+                var lastVersion = -1;
+                for (var i = 0; i < count; i++)
+                {
+                    var started = System.Diagnostics.Stopwatch.StartNew();
+                    int version;
+                    while (!session.CopyPreview(pin.AddrOfPinnedObject(), width * 4, out version) || version == lastVersion)
+                        Thread.Sleep(5);
+                    lastVersion = version;
+                    WriteBgraBmp(Path.Combine(dir, $"frame_{i:000}.bmp"), pixels, width, height);
+                    var remain = interval - started.Elapsed;
+                    if (remain > TimeSpan.Zero) Thread.Sleep(remain);
+                }
+            }
+            finally
+            {
+                pin.Free();
             }
         }
         finally
         {
-            pin.Free();
+            GpuStressHub.Release();
         }
 
         Console.WriteLine(dir);

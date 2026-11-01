@@ -13,8 +13,9 @@ public partial class GpuArenaPreviewWindow : Window
     private GpuStressSession? _session;
     private WriteableBitmap? _bitmap;
     private int _shownVersion;
+    private bool _closeWhenBenchmarkEnds;
 
-    public static void ShowSingle(Window? owner)
+    public static void ShowSingle(Window? owner, bool closeWhenBenchmarkEnds = false)
     {
         if (_instance is not null)
         {
@@ -24,9 +25,15 @@ public partial class GpuArenaPreviewWindow : Window
             return;
         }
 
-        _instance = new GpuArenaPreviewWindow { Owner = owner };
+        _instance = new GpuArenaPreviewWindow { Owner = owner, _closeWhenBenchmarkEnds = closeWhenBenchmarkEnds };
         _instance.Closed += (_, _) => _instance = null;
         _instance.Show();
+    }
+
+    public static void CloseBenchmarkPreview()
+    {
+        if (_instance is { _closeWhenBenchmarkEnds: true })
+            _instance.Close();
     }
 
     private GpuArenaPreviewWindow()
@@ -36,7 +43,7 @@ public partial class GpuArenaPreviewWindow : Window
         {
             try
             {
-                _session = new GpuStressSession();
+                _session = GpuStressHub.Acquire();
                 _bitmap = new WriteableBitmap(GpuStressSession.PreviewWidth, GpuStressSession.PreviewHeight, 96, 96, PixelFormats.Bgra32, null);
                 Viewport.Source = _bitmap;
                 CompositionTarget.Rendering += OnRendering;
@@ -50,8 +57,11 @@ public partial class GpuArenaPreviewWindow : Window
         Closed += (_, _) =>
         {
             CompositionTarget.Rendering -= OnRendering;
-            _session?.Dispose();
-            _session = null;
+            if (_session is not null)
+            {
+                GpuStressHub.Release();
+                _session = null;
+            }
         };
     }
 

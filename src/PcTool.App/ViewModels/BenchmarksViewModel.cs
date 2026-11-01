@@ -27,6 +27,7 @@ public sealed partial class BenchmarksViewModel : ObservableObject
     [ObservableProperty] private bool _runMemory = true;
     [ObservableProperty] private bool _runDisk = true;
     [ObservableProperty] private bool _runGpu = true;
+    [ObservableProperty] private bool _showGpuStressDuringRun = true;
     [ObservableProperty] private bool _quick;
     [ObservableProperty] private string _diskDirectory = Path.GetTempPath();
 
@@ -61,7 +62,7 @@ public sealed partial class BenchmarksViewModel : ObservableObject
     {
         var scale = State.CompareScale;
         IndexCaption =
-            $"{scale.IndexCaption} GPU tier scores are raster gaming (VRAM checked in Games). The stress test is a 1440p raymarch; the arena is a lighter raster scene. One stress window at a time. Close games and heavy apps first; a full run takes about a minute.";
+            $"{scale.IndexCaption} GPU tier scores are raster gaming (VRAM checked in Games). The scored GPU test uses the same 1440p raymarch as View GPU stress test. Close games and heavy apps first; a full run takes about a minute.";
     }
 
     [RelayCommand(CanExecute = nameof(CanRun))]
@@ -73,6 +74,7 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         var options = new BenchmarkOptions
         {
             Cpu = RunCpu, Memory = RunMemory, Disk = RunDisk, Gpu = RunGpu,
+            ShowGpuStressDuringRun = ShowGpuStressDuringRun,
             DiskDirectory = DiskDirectory, DurationScale = Quick ? 0.3 : 1,
         };
         try
@@ -156,18 +158,18 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         {
             double? canonical = CanonicalScore(r, s);
             var displayScore = IndexScore(scale, r.Kind, canonical);
-            var refLabel = r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread
-                or BenchmarkKind.Gpu3D or BenchmarkKind.Gpu3DArena
+            var refLabel = r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread or BenchmarkKind.Gpu3D
                 ? $"{presetLabel} 100"
                 : "";
 
             string? note = null;
-            if (displayScore is { } indexed && r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread
-                or BenchmarkKind.Gpu3D or BenchmarkKind.Gpu3DArena)
+            if (r.Kind == BenchmarkKind.Gpu3DArena)
+                note = "Raster smoke test — FPS only, not indexed to the tier scale. Use GPU 3D headless or View GPU stress test for a meaningful GPU score.";
+            else if (displayScore is { } indexed && r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread or BenchmarkKind.Gpu3D)
             {
                 note = indexed switch
                 {
-                    < 85 => r.Kind is BenchmarkKind.Gpu3D or BenchmarkKind.Gpu3DArena
+                    < 85 => r.Kind == BenchmarkKind.Gpu3D
                         ? $"Below the {presetLabel} reference. Check GPU temperatures, power plan, and that the monitor uses the graphics card."
                         : $"Below the {presetLabel} reference. Check CPU temperatures, power plan, and background apps.",
                     > 115 => $"Above the {presetLabel} reference.",
@@ -178,14 +180,7 @@ public sealed partial class BenchmarksViewModel : ObservableObject
                     var synthIndexed = scale.IndexGpu(synth);
                     var tierIndexed = scale.IndexGpu(gt.Score);
                     if (Math.Abs(synthIndexed - tierIndexed) > 10)
-                        note = $"{note} Headless test {synthIndexed:F0} vs tier {tierIndexed:F0} (VRAM is separate).";
-                }
-                if (r.Kind == BenchmarkKind.Gpu3DArena && s?.GpuTier is { } gt2 && r.Score is { } arenaSynth)
-                {
-                    var arenaIndexed = scale.IndexGpu(arenaSynth);
-                    var tierIndexed = scale.IndexGpu(gt2.Score);
-                    if (Math.Abs(arenaIndexed - tierIndexed) > 10)
-                        note = $"{note} Arena {arenaIndexed:F0} vs tier {tierIndexed:F0} (VRAM is separate).";
+                        note = $"{note} Stress test {synthIndexed:F0} vs tier {tierIndexed:F0} (VRAM is separate).";
                 }
             }
 
@@ -204,7 +199,7 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread => r.Score,
         BenchmarkKind.Gpu3D when specs?.GpuTier is { } gt => gt.Score,
         BenchmarkKind.Gpu3D => r.Score,
-        BenchmarkKind.Gpu3DArena => r.Score,
+        BenchmarkKind.Gpu3DArena => null,
         _ => r.Score,
     };
 
@@ -213,7 +208,6 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         BenchmarkKind.CpuSingleThread when canonical is { } c => scale.IndexCpuSingle(c),
         BenchmarkKind.CpuMultiThread when canonical is { } c => scale.IndexCpuMulti(c),
         BenchmarkKind.Gpu3D when canonical is { } c => scale.IndexGpu(c),
-        BenchmarkKind.Gpu3DArena when canonical is { } c => scale.IndexGpu(c),
         _ => canonical,
     };
 
@@ -227,8 +221,8 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         BenchmarkKind.DiskSequentialWrite => "Disk sequential write",
         BenchmarkKind.DiskRandomRead4K => "Disk 4K random read",
         BenchmarkKind.DiskRandomWrite4K => "Disk 4K random write",
-        BenchmarkKind.Gpu3D => "GPU 3D headless (1440p)",
-        BenchmarkKind.Gpu3DArena => "GPU 3D arena (1440p)",
+        BenchmarkKind.Gpu3D => "GPU 3D stress (1440p)",
+        BenchmarkKind.Gpu3DArena => "GPU 3D arena (1440p, smoke test)",
         _ => k.ToString(),
     };
 }
