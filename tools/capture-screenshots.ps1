@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Captures README screenshots of every PcTool page into docs/screenshots.
 .DESCRIPTION
@@ -16,8 +16,15 @@ param(
     # Runs a full benchmark first so the Benchmarks page has results (about a minute).
     [switch]$RunBenchmark,
     # Deletes local benchmark history so README shots do not show stale runs from before calibration fixes.
-    [switch]$ClearBenchmarkHistory
+    [switch]$ClearBenchmarkHistory,
+    # Capture only these pages (Overview, Benchmarks, Games, …). Default: all.
+    [string[]]$Pages = @()
 )
+
+function Want-Page([string]$name) {
+    if ($Pages.Count -eq 0) { return $true }
+    return $Pages -contains $name
+}
 
 if ($ClearBenchmarkHistory) {
     $hist = Join-Path $env:LOCALAPPDATA "PcTool\benchmarks.json"
@@ -113,14 +120,16 @@ function Capture([string]$page, [string]$file, [scriptblock]$prepare = $null, [i
     }
 }
 
-Capture "Overview" "overview.png" -settle 3
-if ($RunBenchmark) {
-    Capture "Benchmarks" "benchmarks.png" { param($w) Press $w "Run benchmarks"; Start-Sleep -Seconds 75 }
-} else {
-    Capture "Benchmarks" "benchmarks.png"
+if (Want-Page "Overview") { Capture "Overview" "overview.png" -settle 3 }
+if (Want-Page "Benchmarks") {
+    if ($RunBenchmark) {
+        Capture "Benchmarks" "benchmarks.png" { param($w) Press $w "Run benchmarks"; Start-Sleep -Seconds 90 }
+    } else {
+        Capture "Benchmarks" "benchmarks.png"
+    }
 }
-Capture "Games" "games.png"
-Capture "Diagnostics" "diagnostics.png" { param($w) Press $w "Run diagnostics" } -settle 8
-Capture "Compatibility" "compatibility.png" { param($w) Type-Text $w "9070" }
-Capture "Upgrades" "upgrades.png"
-Capture "Settings" "settings.png"
+if (Want-Page "Games") { Capture "Games" "games.png" }
+if (Want-Page "Diagnostics") { Capture "Diagnostics" "diagnostics.png" { param($w) Press $w "Run diagnostics" } -settle 8 }
+if (Want-Page "Compatibility") { Capture "Compatibility" "compatibility.png" { param($w) Type-Text $w "9070" } }
+if (Want-Page "Upgrades") { Capture "Upgrades" "upgrades.png" }
+if (Want-Page "Settings") { Capture "Settings" "settings.png" }

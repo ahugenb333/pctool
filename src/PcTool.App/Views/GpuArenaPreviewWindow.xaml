@@ -9,7 +9,7 @@
     <DockPanel Margin="12">
         <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
             <TextBlock Text="Live 1440p raymarch" FontSize="16" FontWeight="SemiBold" Foreground="#FFE8EAED" />
-            <TextBlock Text="Same scene as the headless GPU score. The GPU always renders 2560×1440; resizing this window only scales the preview, not the FPS counter. The picture updates at monitor rate, so motion can look smoother than the number. Press Esc to close."
+            <TextBlock Text="Same scene as the headless GPU score at 2560×1440. The large FPS number is GPU throughput; the subtitle is how often a new preview frame reaches this window (capped by readback). Resizing only scales the picture. Press Esc to close."
                        Foreground="#FF9AA0A6" TextWrapping="Wrap" Margin="0,4,0,0" />
             <TextBlock x:Name="ErrorText" Foreground="#FFFF6B6B" TextWrapping="Wrap" Margin="0,6,0,0" Visibility="Collapsed" />
         </StackPanel>
@@ -19,7 +19,7 @@
                 <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" Padding="10,6" CornerRadius="4" Background="#CC0A0C14">
                     <StackPanel>
                         <TextBlock x:Name="FpsText" Text="Measuring…" Foreground="#FFE8EAED" FontSize="20" FontWeight="SemiBold" />
-                        <TextBlock x:Name="FrameText" Text="2560×1440 GPU · picture at monitor rate" Foreground="#FF9AA0A6" FontSize="12" />
+                        <TextBlock x:Name="FrameText" Text="1440p GPU · measuring…" Foreground="#FF9AA0A6" FontSize="12" />
                     </StackPanel>
                 </Border>
             </Grid>

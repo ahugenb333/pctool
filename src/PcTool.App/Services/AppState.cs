@@ -86,4 +86,7 @@ public sealed partial class AppState : ObservableObject
 
     private void RebuildCompareScale() =>
         CompareScale = CompareScale.FromPreset(Core.ComparePresets.Get(Settings.Current.ComparePresetId), _tiers);
+
+    partial void OnCompareScaleChanged(CompareScale value) =>
+        SpecsChanged?.Invoke(this, EventArgs.Empty);
 }

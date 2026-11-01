@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -25,6 +26,12 @@ public sealed partial class OverviewViewModel : ObservableObject
 
     public AppState State { get; }
     public ObservableCollection<SpecSection> Sections { get; } = [];
+
+    public string ComparePresetId
+    {
+        get => State.ComparePresetId;
+        set => State.ComparePresetId = value;
+    }
     public ObservableCollection<SensorReading> Sensors { get; } = [];
 
     [ObservableProperty] private string _sensorNote = "";
@@ -35,6 +42,13 @@ public sealed partial class OverviewViewModel : ObservableObject
         State = state;
         _sensors = sensors;
         state.SpecsChanged += (_, _) => Rebuild();
+        state.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(AppState.ComparePresetId))
+                OnPropertyChanged(nameof(ComparePresetId));
+            if (e.PropertyName is nameof(AppState.CompareScale) or nameof(AppState.ComparePresetId))
+                Rebuild();
+        };
         _sensorTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
         _sensorTimer.Tick += async (_, _) => await RefreshSensorsAsync();
         Rebuild();

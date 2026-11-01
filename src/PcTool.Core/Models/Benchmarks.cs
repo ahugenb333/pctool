@@ -12,7 +12,7 @@ public enum BenchmarkKind
     DiskRandomWrite4K,
     /// <summary>Offscreen raymarched scene at 1440p (no window).</summary>
     Gpu3D,
-    /// <summary>Offscreen raster arena at 1440p; use the preview window to watch the same scene.</summary>
+    /// <summary>Preview frames delivered to the stress viewport (half-res readback cadence).</summary>
     Gpu3DArena,
 }
 

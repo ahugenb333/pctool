@@ -45,7 +45,7 @@ public sealed class BenchmarkSuite
         {
             GpuStressHub.ShowWindowDuringBenchmark = options.ShowGpuStressDuringRun;
             stages.Add(("GPU 3D stress (1440p)", _ => [GpuBenchmark.Run(Scaled(8), ct)]));
-            stages.Add(("GPU 3D arena", _ => [GpuRasterBenchmark.Run(Scaled(8), ct)]));
+            stages.Add(("GPU preview (viewport)", _ => [GpuRasterBenchmark.Run(Scaled(8), ct)]));
         }
 
         for (var i = 0; i < stages.Count; i++)
