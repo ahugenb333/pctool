@@ -71,6 +71,10 @@ dotnet run --project tools/PcTool.Cli -- upgrades --goal Gaming1440p --budget 60
 dotnet run --project tools/PcTool.Cli -- check --part "<model text>" --psu 650
 ```
 
+## Git
+
+Use a **new branch per change or PR** (for example `release/v0.1.2`, `cursor/feature-name`); do not keep committing to an already-open feature branch unless the user asks. Bump `Directory.Build.props` `<Version>` and `src/PcTool.App/app.manifest` together before tagging `v*`. Tag after merge to `main`: `git tag v0.1.2 && git push origin v0.1.2`.
+
 ## Gotchas
 
 - WPF projects don't get `System.IO` as an implicit using; add it explicitly.
