@@ -21,6 +21,7 @@
                     <CheckBox Content="Memory" IsChecked="{Binding RunMemory}" Margin="0,0,16,0" />
                     <CheckBox Content="Disk" IsChecked="{Binding RunDisk}" Margin="0,0,16,0" />
                     <CheckBox Content="GPU 3D" IsChecked="{Binding RunGpu}" Margin="0,0,16,0" />
+                    <CheckBox Content="Show GPU stress during run" IsChecked="{Binding ShowGpuStressDuringRun}" Margin="0,0,16,0" />
                     <ui:ToggleSwitch Content="Quick run (noisier)" IsChecked="{Binding Quick}" />
                 </WrapPanel>
                 <DockPanel Margin="0,12,0,0">

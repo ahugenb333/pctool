@@ -14,8 +14,6 @@ public static class GpuRasterBenchmark
 {
     public const int Width = 2560;
     public const int Height = 1440;
-    internal const double ReferenceFps = 120;
-
     public static BenchmarkResult Run(TimeSpan duration, CancellationToken ct)
     {
         using var adapter = D3D11GpuHelper.PickAdapter(out _);
@@ -59,8 +57,8 @@ public static class GpuRasterBenchmark
                 foreach (var q in queries) while (!context.IsDataAvailable(q)) Thread.SpinWait(32);
 
                 var fps = frames / sw.Elapsed.TotalSeconds;
-                return new BenchmarkResult(BenchmarkKind.Gpu3DArena, Math.Round(fps, 1), "FPS",
-                    Math.Round(fps / ReferenceFps * 100, 1),
+                // FPS only — scene is a light raster smoke test, not tier-calibrated (unlike Gpu3D headless).
+                return new BenchmarkResult(BenchmarkKind.Gpu3DArena, Math.Round(fps, 1), "FPS", null,
                     new Dictionary<string, double>
                     {
                         ["Width"] = Width,

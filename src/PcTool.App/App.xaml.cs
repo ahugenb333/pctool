@@ -69,6 +69,16 @@ public partial class App : Application
 
         Services = services.BuildServiceProvider();
 
+        GpuStressHub.SessionAvailable += () =>
+        {
+            if (!GpuStressHub.ShowWindowDuringBenchmark) return;
+            Current.Dispatcher.Invoke(() =>
+                GpuArenaPreviewWindow.ShowSingle(Services.GetRequiredService<MainWindow>(), closeWhenBenchmarkEnds: true));
+        };
+
+        GpuStressHub.BenchmarkGpuStressFinished += () =>
+            Current.Dispatcher.Invoke(GpuArenaPreviewWindow.CloseBenchmarkPreview);
+
         var window = Services.GetRequiredService<MainWindow>();
         MainWindow = window;
         window.Show();
