@@ -9,7 +9,7 @@
         <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
             <TextBlock Text="Compare against" VerticalAlignment="Center" Margin="0,0,8,0" />
             <ComboBox ItemsSource="{Binding State.ComparePresetOptions}" DisplayMemberPath="Label"
-                      SelectedValuePath="Id" SelectedValue="{Binding State.ComparePresetId, Mode=TwoWay}"
+                      SelectedValuePath="Id" SelectedValue="{Binding ComparePresetId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       MinWidth="140" />
         </StackPanel>
         <TextBlock Style="{StaticResource Caption}" Margin="0,4,0,0" Text="{Binding IndexCaption}" TextWrapping="Wrap" />

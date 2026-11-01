@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -21,6 +22,12 @@ public sealed partial class BenchmarksViewModel : ObservableObject
 
     public AppState State { get; }
     public ObservableCollection<BenchmarkRow> Results { get; } = [];
+
+    public string ComparePresetId
+    {
+        get => State.ComparePresetId;
+        set => State.ComparePresetId = value;
+    }
     public ObservableCollection<BenchmarkHistoryRow> History { get; } = [];
 
     [ObservableProperty] private bool _runCpu = true;
@@ -47,15 +54,25 @@ public sealed partial class BenchmarksViewModel : ObservableObject
     {
         State = state;
         _suite = suite;
-        state.SpecsChanged += (_, _) =>
-        {
-            UpdateIndexCaption();
-            ShowRun(state.Benchmarks.Latest);
-            RefreshHistory();
-        };
+        state.SpecsChanged += (_, _) => RefreshDisplayedResults();
+        state.PropertyChanged += OnStatePropertyChanged;
+        RefreshDisplayedResults();
+    }
+
+    private void OnStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AppState.ComparePresetId))
+            OnPropertyChanged(nameof(ComparePresetId));
+        if (e.PropertyName is nameof(AppState.CompareScale) or nameof(AppState.ComparePresetId))
+            RefreshDisplayedResults();
+    }
+
+    private void RefreshDisplayedResults()
+    {
         UpdateIndexCaption();
-        ShowRun(state.Benchmarks.Latest);
+        ShowRun(State.Benchmarks.Latest);
         RefreshHistory();
+        OnPropertyChanged(nameof(Results));
     }
 
     private void UpdateIndexCaption()
@@ -156,11 +173,8 @@ public sealed partial class BenchmarksViewModel : ObservableObject
 
         foreach (var r in run.Results)
         {
-            double? canonical = CanonicalScore(r, s);
-            var displayScore = IndexScore(scale, r.Kind, canonical);
-            var refLabel = r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread or BenchmarkKind.Gpu3D
-                ? $"{presetLabel} 100"
-                : "";
+            var displayScore = PresetIndexedScore(scale, r);
+            var refLabel = displayScore is not null ? $"{presetLabel} 100" : "";
 
             var showBar = displayScore is not null;
             string? note = null;
@@ -197,21 +211,13 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         }
     }
 
-    private static double? CanonicalScore(BenchmarkResult r, SystemSpecs? specs) => r.Kind switch
+    /// <summary>Preset-relative index for the score column (CPU + GPU stress only).</summary>
+    private static double? PresetIndexedScore(CompareScale scale, BenchmarkResult r) => r.Kind switch
     {
-        BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread => r.Score,
-        BenchmarkKind.Gpu3D when specs?.GpuTier is { } gt => gt.Score,
-        BenchmarkKind.Gpu3D => r.Score,
-        BenchmarkKind.Gpu3DArena => null,
-        _ => r.Score,
-    };
-
-    private static double? IndexScore(CompareScale scale, BenchmarkKind kind, double? canonical) => kind switch
-    {
-        BenchmarkKind.CpuSingleThread when canonical is { } c => scale.IndexCpuSingle(c),
-        BenchmarkKind.CpuMultiThread when canonical is { } c => scale.IndexCpuMulti(c),
-        BenchmarkKind.Gpu3D when canonical is { } c => scale.IndexGpu(c),
-        _ => canonical,
+        BenchmarkKind.CpuSingleThread when r.Score is { } s => scale.IndexCpuSingle(s),
+        BenchmarkKind.CpuMultiThread when r.Score is { } s => scale.IndexCpuMulti(s),
+        BenchmarkKind.Gpu3D when r.Score is { } s => scale.IndexGpu(s),
+        _ => null,
     };
 
     private static string Label(BenchmarkKind k) => k switch
