@@ -25,17 +25,20 @@ public sealed class GpuStressSession : IDisposable
     private readonly byte[] _scratch = new byte[PreviewWidth * PreviewHeight * 4];
     private int _previewVersion;
     private double _fps;
+    private double _previewFps;
     private Exception? _startError;
     private TimedBenchRequest? _timedBench;
 
     private sealed class TimedBenchRequest
     {
+        public required bool CountPreviewFrames { get; init; }
         public required TimeSpan Duration { get; init; }
         public required CancellationToken CancellationToken { get; init; }
         public required TaskCompletionSource<BenchmarkResult> Completion { get; init; }
         public Stopwatch WarmupClock { get; } = Stopwatch.StartNew();
         public Stopwatch? MeasureClock { get; set; }
         public long MeasureFrames { get; set; }
+        public long MeasureGpuTicks { get; set; }
     }
 
     public GpuStressSession()
@@ -47,9 +50,16 @@ public sealed class GpuStressSession : IDisposable
         if (_startError is not null) throw _startError;
     }
 
+    /// <summary>1440p raymarch throughput (GPU time).</summary>
     public double Fps
     {
         get { lock (_gate) return _fps; }
+    }
+
+    /// <summary>Half-res preview frames pushed for the viewport (same cadence as the stress window picture).</summary>
+    public double PreviewFps
+    {
+        get { lock (_gate) return _previewFps; }
     }
 
     /// <summary>Copies the latest BGRA preview. Returns false until the first picture is ready.</summary>
@@ -74,14 +84,27 @@ public sealed class GpuStressSession : IDisposable
     }
 
     /// <summary>Blocks until the render thread finishes warmup plus <paramref name="duration"/> (GPU-synced frames).</summary>
-    public BenchmarkResult RunTimedBenchmark(TimeSpan duration, CancellationToken ct)
+    public BenchmarkResult RunTimedBenchmark(TimeSpan duration, CancellationToken ct) =>
+        RunTimedInternal(duration, countPreviewFrames: false, ct);
+
+    /// <summary>Blocks until warmup plus <paramref name="duration"/>; counts preview publishes (viewport output), not raw 1440p frames.</summary>
+    public BenchmarkResult RunTimedPreviewBenchmark(TimeSpan duration, CancellationToken ct) =>
+        RunTimedInternal(duration, countPreviewFrames: true, ct);
+
+    private BenchmarkResult RunTimedInternal(TimeSpan duration, bool countPreviewFrames, CancellationToken ct)
     {
         var tcs = new TaskCompletionSource<BenchmarkResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         lock (_gate)
         {
             if (_timedBench is not null)
                 throw new InvalidOperationException("A timed GPU benchmark is already running.");
-            _timedBench = new TimedBenchRequest { Duration = duration, CancellationToken = ct, Completion = tcs };
+            _timedBench = new TimedBenchRequest
+            {
+                CountPreviewFrames = countPreviewFrames,
+                Duration = duration,
+                CancellationToken = ct,
+                Completion = tcs,
+            };
         }
 
         using (ct.Register(() => tcs.TrySetCanceled(ct)))
@@ -112,9 +135,11 @@ public sealed class GpuStressSession : IDisposable
                 _ready.Set();
                 var clock = Stopwatch.StartNew();
                 var sample = Stopwatch.StartNew();
+                var previewSample = Stopwatch.StartNew();
                 var nextPreview = Stopwatch.StartNew();
                 long frames = 0;
                 long gpuTicks = 0;
+                long previewFrames = 0;
                 while (!_cts.IsCancellationRequested)
                 {
                     var frame = Stopwatch.StartNew();
@@ -129,7 +154,7 @@ public sealed class GpuStressSession : IDisposable
                     gpuTicks += frame.ElapsedTicks;
                     frames++;
 
-                    TryAdvanceTimedBenchmark();
+                    TryAdvanceTimedBenchmark(frame.ElapsedTicks);
 
                     if (sample.Elapsed.TotalSeconds >= 1 && gpuTicks > 0)
                     {
@@ -149,6 +174,15 @@ public sealed class GpuStressSession : IDisposable
                             _previewVersion++;
                         }
                         nextPreview.Restart();
+                        previewFrames++;
+                        if (previewSample.Elapsed.TotalSeconds >= 1)
+                        {
+                            var pFps = previewFrames / previewSample.Elapsed.TotalSeconds;
+                            lock (_gate) _previewFps = pFps;
+                            previewFrames = 0;
+                            previewSample.Restart();
+                        }
+                        TryAdvanceTimedPreviewBenchmark();
                     }
                 }
             }
@@ -160,11 +194,56 @@ public sealed class GpuStressSession : IDisposable
         }
     }
 
-    private void TryAdvanceTimedBenchmark()
+    private void TryAdvanceTimedBenchmark(long frameGpuTicks)
     {
         TimedBenchRequest? req;
         lock (_gate) req = _timedBench;
-        if (req is null) return;
+        if (req is null || req.CountPreviewFrames) return;
+
+        try
+        {
+            req.CancellationToken.ThrowIfCancellationRequested();
+            if (req.WarmupClock.Elapsed < TimeSpan.FromSeconds(1.5)) return;
+
+            req.MeasureClock ??= Stopwatch.StartNew();
+            if (req.MeasureClock.Elapsed < req.Duration)
+            {
+                req.MeasureFrames++;
+                req.MeasureGpuTicks += frameGpuTicks;
+                return;
+            }
+
+            var fps = req.MeasureGpuTicks > 0
+                ? req.MeasureFrames / (req.MeasureGpuTicks / (double)Stopwatch.Frequency)
+                : req.MeasureFrames / req.MeasureClock.Elapsed.TotalSeconds;
+            var result = new BenchmarkResult(
+                BenchmarkKind.Gpu3D,
+                Math.Round(fps, 1),
+                "FPS",
+                Math.Round(fps / GpuBenchmark.ReferenceFps * 100, 1),
+                new Dictionary<string, double>
+                {
+                    ["Width"] = GpuRaymarchScene.Width,
+                    ["Height"] = GpuRaymarchScene.Height,
+                    ["Frames"] = req.MeasureFrames,
+                    ["SharedSession"] = 1,
+                });
+
+            lock (_gate) _timedBench = null;
+            req.Completion.TrySetResult(result);
+        }
+        catch (Exception ex)
+        {
+            lock (_gate) _timedBench = null;
+            req.Completion.TrySetException(ex);
+        }
+    }
+
+    private void TryAdvanceTimedPreviewBenchmark()
+    {
+        TimedBenchRequest? req;
+        lock (_gate) req = _timedBench;
+        if (req is null || !req.CountPreviewFrames) return;
 
         try
         {
@@ -180,15 +259,15 @@ public sealed class GpuStressSession : IDisposable
 
             var fps = req.MeasureFrames / req.MeasureClock.Elapsed.TotalSeconds;
             var result = new BenchmarkResult(
-                BenchmarkKind.Gpu3D,
+                BenchmarkKind.Gpu3DArena,
                 Math.Round(fps, 1),
                 "FPS",
-                Math.Round(fps / GpuBenchmark.ReferenceFps * 100, 1),
+                null,
                 new Dictionary<string, double>
                 {
-                    ["Width"] = GpuRaymarchScene.Width,
-                    ["Height"] = GpuRaymarchScene.Height,
-                    ["Frames"] = req.MeasureFrames,
+                    ["Width"] = PreviewWidth,
+                    ["Height"] = PreviewHeight,
+                    ["PreviewFrames"] = req.MeasureFrames,
                     ["SharedSession"] = 1,
                 });
 

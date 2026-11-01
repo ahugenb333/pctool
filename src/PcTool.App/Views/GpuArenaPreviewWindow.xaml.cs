@@ -68,9 +68,16 @@ public partial class GpuArenaPreviewWindow : Window
     private void OnRendering(object? sender, EventArgs e)
     {
         if (_session is null || _bitmap is null) return;
-        var fps = _session.Fps;
-        if (fps > 0)
-            FpsText.Text = $"{fps:0} FPS";
+        var gpu = _session.Fps;
+        var preview = _session.PreviewFps;
+        if (gpu > 0)
+            FpsText.Text = $"{gpu:0} FPS";
+        if (gpu > 0 || preview > 0)
+        {
+            FrameText.Text = preview > 0
+                ? $"1440p GPU · preview {preview:0} fps to window"
+                : "1440p GPU · measuring preview…";
+        }
 
         _bitmap.Lock();
         try

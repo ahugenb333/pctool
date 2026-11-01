@@ -56,4 +56,17 @@ public static class GpuStressHub
             BenchmarkGpuStressFinished?.Invoke();
         }
     }
+
+    public static BenchmarkResult RunPreviewBenchmark(TimeSpan duration, CancellationToken ct)
+    {
+        Acquire();
+        try
+        {
+            return _session!.RunTimedPreviewBenchmark(duration, ct);
+        }
+        finally
+        {
+            Release();
+        }
+    }
 }

@@ -10,7 +10,7 @@ using PcTool.Core.Models;
 
 namespace PcTool.App.ViewModels;
 
-public sealed record BenchmarkRow(string Name, string Value, string Score, string Typical, string? Note, double Fraction);
+public sealed record BenchmarkRow(string Name, string Value, string Score, string Typical, string? Note, double Fraction, bool ShowIndexBar);
 
 public sealed record BenchmarkHistoryRow(string When, string CpuSingle, string CpuMulti, string Gpu, string Disk);
 
@@ -162,9 +162,11 @@ public sealed partial class BenchmarksViewModel : ObservableObject
                 ? $"{presetLabel} 100"
                 : "";
 
+            var showBar = displayScore is not null;
             string? note = null;
             if (r.Kind == BenchmarkKind.Gpu3DArena)
-                note = "Raster smoke test — FPS only, not indexed to the tier scale. Use GPU 3D headless or View GPU stress test for a meaningful GPU score.";
+                note =
+                    "Preview frames sent to the viewport (same rate as the stress window counter). Not used for tier scoring — use GPU 3D stress for that.";
             else if (displayScore is { } indexed && r.Kind is BenchmarkKind.CpuSingleThread or BenchmarkKind.CpuMultiThread or BenchmarkKind.Gpu3D)
             {
                 note = indexed switch
@@ -186,11 +188,12 @@ public sealed partial class BenchmarksViewModel : ObservableObject
 
             Results.Add(new BenchmarkRow(
                 Label(r.Kind),
-                $"{r.Value:#,0.#} {r.Unit}",
-                displayScore is { } sc ? sc.ToString("F0") : "-",
+                FormatValue(r),
+                displayScore is { } sc ? sc.ToString("F0") : "—",
                 refLabel,
                 note,
-                Math.Clamp((displayScore ?? 0) / 200, 0, 1)));
+                Math.Clamp((displayScore ?? 0) / 200, 0, 1),
+                showBar));
         }
     }
 
@@ -222,7 +225,9 @@ public sealed partial class BenchmarksViewModel : ObservableObject
         BenchmarkKind.DiskRandomRead4K => "Disk 4K random read",
         BenchmarkKind.DiskRandomWrite4K => "Disk 4K random write",
         BenchmarkKind.Gpu3D => "GPU 3D stress (1440p)",
-        BenchmarkKind.Gpu3DArena => "GPU 3D arena (1440p, smoke test)",
+        BenchmarkKind.Gpu3DArena => "GPU preview (viewport)",
         _ => k.ToString(),
     };
+
+    private static string FormatValue(BenchmarkResult r) => $"{r.Value:#,0.#} {r.Unit}";
 }
